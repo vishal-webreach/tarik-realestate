@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/astro/Hero.astro";
+import PropertySearch from "../components/react/PropertySearch";
+import TrustBand from "../components/astro/TrustBand.astro";
+import IntroSection from "../components/astro/IntroSection.astro";
+import FeaturedProperties from "../components/astro/FeaturedProperties.astro";
+import BuySellSection from "../components/astro/BuySellSection.astro";
+import SellerCTA from "../components/astro/SellerCTA.astro";
+import AreasSection from "../components/astro/AreasSection.astro";
+import RecentSales from "../components/astro/RecentSales.astro";
+import AboutSection from "../components/astro/AboutSection.astro";
+import Testimonials from "../components/react/Testimonials";
+import InsightsSection from "../components/astro/InsightsSection.astro";
+import FinalCTA from "../components/astro/FinalCTA.astro";
+---
+
+<BaseLayout
+  title="Tarik Real Estate | Alexandria, Virginia Real Estate"
+  description="Tarik Real Estate offers expert buying and selling guidance in Alexandria, Virginia and the Northern Virginia DMV area. Local knowledge, personal service, and strategic real estate expertise."
+>
+  <Hero />
+  <PropertySearch client:load />
+  <TrustBand />
+  <IntroSection />
+  <FeaturedProperties />
+  <BuySellSection />
+  <SellerCTA />
+  <AreasSection />
+  <RecentSales />
+  <AboutSection />
+  <Testimonials client:visible />
+  <InsightsSection />
+  <FinalCTA />
+</BaseLayout>

@@ -1,0 +1,99 @@
+---
+import { Image } from "astro:assets";
+---
+
+<section
+  id="buy-sell"
+  class="grid grid-cols-1 lg:grid-cols-2"
+  aria-label="Buy and Sell with Tarik Real Estate"
+>
+  {/* BUY panel */}
+  <div class="reveal relative min-h-130 lg:min-h-160 flex items-end overflow-hidden group">
+    {/* Background image */}
+    <div class="absolute inset-0">
+      <Image
+        src="https://images.pexels.com/photos/7174113/pexels-photo-7174113.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=800&w=900"
+        alt="Modern living room interior — buy your next home in Alexandria, Virginia"
+        loading="lazy"
+        width={900}
+        height={800}
+        class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+      />
+      <div class="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-black/10"></div>
+    </div>
+
+    {/* Content */}
+    <div class="relative z-10 p-10 lg:p-14">
+      <p class="text-gold text-[10px] tracking-[0.3em] uppercase font-medium mb-3">
+        For Buyers
+      </p>
+      <h2 class="font-serif text-white text-3xl lg:text-4xl font-medium mb-4 leading-tight">
+        Buy With Us
+      </h2>
+      <p class="text-white/70 text-base leading-relaxed max-w-sm mb-8">
+        Find the right property with guidance from a local real estate
+        professional who knows the Northern Virginia market inside and out.
+      </p>
+      <a
+        href="#contact"
+        class="inline-flex items-center gap-3 px-7 py-3.5 border border-white/60 text-white text-[11px] font-medium tracking-[0.18em] uppercase hover:bg-white hover:text-charcoal transition-all duration-300 focus-visible:outline-white focus-visible:outline-offset-2 group/btn"
+      >
+        Start Your Search
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 14 14"
+          fill="none"
+          class="transition-transform duration-300 group-hover/btn:translate-x-1"
+        >
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  {/* SELL panel */}
+  <div class="reveal reveal-delay-2 relative min-h-130 lg:min-h-160 flex items-end overflow-hidden group">
+    {/* Background image */}
+    <div class="absolute inset-0">
+      <Image
+        src="https://images.pexels.com/photos/8082316/pexels-photo-8082316.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=800&w=900"
+        alt="Contemporary kitchen interior — sell your home with Tarik Real Estate"
+        loading="lazy"
+        width={900}
+        height={800}
+        class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+      />
+      <div class="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-black/10"></div>
+    </div>
+
+    {/* Content */}
+    <div class="relative z-10 p-10 lg:p-14">
+      <p class="text-gold text-[10px] tracking-[0.3em] uppercase font-medium mb-3">
+        For Sellers
+      </p>
+      <h2 class="font-serif text-white text-3xl lg:text-4xl font-medium mb-4 leading-tight">
+        Sell With Us
+      </h2>
+      <p class="text-white/70 text-base leading-relaxed max-w-sm mb-8">
+        Position your property strategically and connect with qualified
+        buyers through a thoughtful, results-focused approach.
+      </p>
+      <a
+        href="#sell"
+        class="inline-flex items-center gap-3 px-7 py-3.5 border border-white/60 text-white text-[11px] font-medium tracking-[0.18em] uppercase hover:bg-white hover:text-charcoal transition-all duration-300 focus-visible:outline-white focus-visible:outline-offset-2 group/btn"
+      >
+        Sell Your Property
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 14 14"
+          fill="none"
+          class="transition-transform duration-300 group-hover/btn:translate-x-1"
+        >
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>

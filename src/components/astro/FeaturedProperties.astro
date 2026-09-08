@@ -1,0 +1,55 @@
+---
+import PropertyCard from "./PropertyCard.astro";
+import { featuredProperties } from "../../data/properties";
+---
+
+<section
+  id="properties"
+  class="py-20 lg:py-32 px-6 lg:px-10 bg-cream"
+  aria-labelledby="featured-heading"
+>
+  <div class="max-w-350 mx-auto">
+    {/* Section header */}
+    <div class="reveal flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-14 lg:mb-18">
+      <div>
+        <span class="section-divider mb-5" aria-hidden="true"></span>
+        <h2
+          id="featured-heading"
+          class="font-serif text-charcoal text-3xl lg:text-4xl xl:text-5xl font-medium leading-tight"
+        >
+          Featured
+          <br />
+          Properties
+        </h2>
+        <p class="text-warm-gray text-base mt-4 max-w-md leading-relaxed">
+          Explore a selection of properties currently represented by Tarik Real Estate.
+        </p>
+      </div>
+
+      <a
+        href="/properties"
+        class="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] uppercase text-charcoal hover:text-gold transition-colors duration-200 group focus-visible:outline-gold self-start lg:self-auto pb-1 border-b border-charcoal hover:border-gold"
+      >
+        View All Properties
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 14 14"
+          fill="none"
+          class="transition-transform duration-300 group-hover:translate-x-1"
+        >
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
+    </div>
+
+    {/* Property grid */}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+      {featuredProperties.map((property, index) => (
+        <div class="reveal" style={`transition-delay: ${index * 100}ms`}>
+          <PropertyCard property={property} />
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

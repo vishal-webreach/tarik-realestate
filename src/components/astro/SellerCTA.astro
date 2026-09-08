@@ -1,0 +1,77 @@
+---
+import { Image } from "astro:assets";
+---
+
+<section
+  id="sell"
+  class="relative py-24 lg:py-36 px-6 lg:px-10 overflow-hidden"
+  aria-labelledby="seller-cta-heading"
+>
+  {/* Background */}
+  <div class="absolute inset-0">
+    <Image
+      src="https://images.pexels.com/photos/36595190/pexels-photo-36595190.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=800&w=1600"
+      alt="Elegant Tudor Revival home representing properties represented by Tarik Real Estate"
+      loading="lazy"
+      width={1600}
+      height={800}
+      class="w-full h-full object-cover object-center"
+    />
+    <div class="absolute inset-0 bg-charcoal/85"></div>
+  </div>
+
+  {/* Content */}
+  <div class="relative z-10 max-w-350 mx-auto">
+    <div class="reveal max-w-2xl">
+      <span class="section-divider bg-gold mb-6" aria-hidden="true"></span>
+      <p class="text-gold text-[10px] tracking-[0.3em] uppercase font-medium mb-4">
+        Sellers
+      </p>
+      <h2
+        id="seller-cta-heading"
+        class="font-serif text-white text-4xl lg:text-5xl xl:text-6xl font-medium leading-tight mb-6"
+      >
+        Thinking About
+        <br />
+        <em class="italic text-white/80">Selling?</em>
+      </h2>
+      <p class="text-white/60 text-base lg:text-lg leading-relaxed mb-4 max-w-lg">
+        Tell us about your property.
+      </p>
+      <p class="text-white/50 text-base leading-relaxed mb-10 max-w-lg">
+        Whether you're ready to sell or simply exploring your options,
+        start the conversation with Tarik Real Estate. Every submission is
+        reviewed by an agent before a listing goes live.
+      </p>
+
+      <button
+        type="button"
+        data-enquiry-open
+        data-variant="seller"
+        class="inline-flex items-center gap-3 px-8 py-4 bg-gold text-white text-[11px] font-medium tracking-[0.2em] uppercase hover:bg-gold-dark transition-all duration-300 focus-visible:outline-white focus-visible:outline-offset-2 group"
+      >
+        Submit Your Property
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 14 14"
+          fill="none"
+          class="transition-transform duration-300 group-hover:translate-x-1"
+        >
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  {/* Decorative element */}
+  <div
+    class="absolute right-10 top-1/2 -translate-y-1/2 hidden xl:block opacity-10"
+    aria-hidden="true"
+  >
+    <svg viewBox="0 0 200 200" fill="none" class="w-64 h-64 text-white">
+      <path d="M100 10L190 80V190H120V130H80V190H10V80L100 10Z" stroke="currentColor" stroke-width="1.5" fill="none" />
+      <path d="M100 30L175 90V175H125V115H75V175H25V90L100 30Z" stroke="currentColor" stroke-width="0.5" fill="none" />
+    </svg>
+  </div>
+</section>

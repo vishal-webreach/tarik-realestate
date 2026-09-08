@@ -1,0 +1,36 @@
+---
+---
+
+<button
+  id="scroll-top-btn"
+  type="button"
+  aria-label="Scroll to top"
+  class="fixed bottom-6 right-6 z-40 w-11 h-11 flex items-center justify-center bg-charcoal text-white border border-charcoal opacity-0 pointer-events-none translate-y-2 shadow-lg transition-all duration-300 hover:bg-gold hover:border-gold focus-visible:outline-gold"
+>
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <path d="M8 13V3M3 8l5-5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+</button>
+
+<script>
+  const btn = document.getElementById("scroll-top-btn");
+
+  if (btn) {
+    const SHOW_AFTER_PX = 600;
+
+    const updateVisibility = () => {
+      const shouldShow = window.scrollY > SHOW_AFTER_PX;
+      btn.classList.toggle("opacity-0", !shouldShow);
+      btn.classList.toggle("pointer-events-none", !shouldShow);
+      btn.classList.toggle("translate-y-2", !shouldShow);
+    };
+
+    window.addEventListener("scroll", updateVisibility, { passive: true });
+    updateVisibility();
+
+    btn.addEventListener("click", () => {
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
+    });
+  }
+</script>

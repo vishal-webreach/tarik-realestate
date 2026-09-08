@@ -1,0 +1,104 @@
+---
+import { Image } from "astro:assets";
+import { siteConfig } from "../../data/site-config";
+import agentPhoto from "../../assets/profile/profile-4.jpg";
+---
+
+<section
+  id="about"
+  class="py-20 lg:py-32 px-6 lg:px-10 bg-cream"
+  aria-labelledby="about-heading"
+>
+  <div class="max-w-350 mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-24 items-center">
+      {/* Image */}
+      <div class="reveal order-2 lg:order-1">
+        <div class="relative">
+          <div class="relative overflow-hidden aspect-[3/4] max-w-120 mx-auto lg:mx-0">
+            <Image
+              src={agentPhoto}
+              alt={`${siteConfig.agent.fullName}, ${siteConfig.agent.title} — Tarik Real Estate, Alexandria, Virginia`}
+              loading="lazy"
+              class="w-full h-full object-cover object-top"
+            />
+          </div>
+          {/* Accent */}
+          <div
+            class="absolute -bottom-4 -left-4 lg:-bottom-5 lg:-left-5 w-2/3 h-2/3 border border-gold/25 -z-10"
+            aria-hidden="true"
+          ></div>
+          {/* Floating label */}
+          <div class="absolute bottom-6 right-4 lg:top-6 lg:bottom-auto lg:-right-8 bg-white border border-border px-6 py-4 shadow-lg">
+            <p class="font-serif text-charcoal text-lg font-medium leading-tight">{siteConfig.agent.fullName}</p>
+            <p class="text-gold text-[10px] tracking-[0.2em] uppercase font-medium mt-1">{siteConfig.agent.title}</p>
+            <p class="text-warm-gray text-[11px] mt-1">Alexandria, VA</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Text */}
+      <div class="reveal reveal-delay-2 order-1 lg:order-2">
+        <span class="section-divider mb-5" aria-hidden="true"></span>
+        <p class="text-[10px] font-medium tracking-[0.3em] uppercase text-gold mb-4">
+          About
+        </p>
+        <h2
+          id="about-heading"
+          class="font-serif text-charcoal text-3xl lg:text-4xl xl:text-5xl font-medium leading-tight mb-6"
+        >
+          Real Estate
+          <br />
+          Is Personal.
+        </h2>
+
+        <div class="space-y-4 text-warm-gray text-base leading-relaxed">
+          <p>
+            Tarik Real Estate was built on a simple belief: that buying or
+            selling a home should feel like working with a trusted advisor,
+            not navigating a transaction.
+          </p>
+          <p>
+            Serving Alexandria and the Northern Virginia area, Tarik brings
+            a thoughtful, client-focused approach to every engagement —
+            combining careful listening, local market knowledge, and honest
+            guidance to help clients make decisions they feel confident about.
+          </p>
+          <p>
+            Whether you're buying your first home, making a move, or
+            preparing to sell, expect a process that's clear, responsive,
+            and always centered on your goals.
+          </p>
+        </div>
+
+        <div class="mt-8 pt-8 border-t border-border">
+          <div class="grid grid-cols-2 gap-6">
+            <div>
+              <p class="font-serif text-charcoal text-2xl font-medium">Alexandria</p>
+              <p class="text-warm-gray text-[12px] mt-1 tracking-wide">Primary Market</p>
+            </div>
+            <div>
+              <p class="font-serif text-charcoal text-2xl font-medium">Northern VA</p>
+              <p class="text-warm-gray text-[12px] mt-1 tracking-wide">DMV Region</p>
+            </div>
+          </div>
+        </div>
+
+        <a
+          href="/about"
+          class="inline-flex items-center gap-2 mt-8 text-[11px] font-medium tracking-[0.2em] uppercase text-charcoal hover:text-gold transition-colors duration-200 group focus-visible:outline-gold pb-1 border-b border-charcoal hover:border-gold"
+        >
+          Meet Tarik
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="none"
+            class="transition-transform duration-300 group-hover:translate-x-1"
+          >
+            <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,72 @@
+---
+import { Image } from "astro:assets";
+import { serviceAreas } from "../../data/areas";
+---
+
+<section
+  id="areas"
+  class="py-20 lg:py-32 px-6 lg:px-10 bg-cream"
+  aria-labelledby="areas-heading"
+>
+  <div class="max-w-350 mx-auto">
+    <div class="reveal mb-14">
+      <span class="section-divider mb-5" aria-hidden="true"></span>
+      <p class="text-[10px] font-medium tracking-[0.3em] uppercase text-gold mb-4">
+        Service Areas
+      </p>
+      <h2
+        id="areas-heading"
+        class="font-serif text-charcoal text-3xl lg:text-4xl xl:text-5xl font-medium leading-tight max-w-lg"
+      >
+        Local Knowledge.
+        <br />
+        Real Connections.
+      </h2>
+      <p class="text-warm-gray text-base mt-4 max-w-xl leading-relaxed">
+        Deep familiarity with Alexandria, Northern Virginia, and the broader DMV market means better guidance at every step.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
+      {serviceAreas.map((area, index) => (
+        <div class="reveal" style={`transition-delay: ${index * 80}ms`}>
+          <a
+            href={`/areas/${area.slug}`}
+            class="group block relative overflow-hidden aspect-[3/4] focus-visible:outline-gold"
+            aria-label={`Explore properties in ${area.name}`}
+          >
+            <Image
+              src={area.image}
+              alt={area.imageAlt}
+              loading="lazy"
+              width={600}
+              height={800}
+              class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+            />
+            <div class="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-5">
+              <h3 class="font-serif text-white text-xl font-medium mb-1 leading-snug">
+                {area.name}
+              </h3>
+              <p class="text-white/60 text-[12px] leading-relaxed line-clamp-2 mb-3">
+                {area.description}
+              </p>
+              <div class="flex items-center gap-2 text-gold text-[10px] tracking-[0.2em] uppercase font-medium">
+                <span>Explore</span>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  class="transition-transform duration-300 group-hover:translate-x-1"
+                >
+                  <path d="M2 6h8M6 3l3 3-3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+            </div>
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,120 @@
+---
+import { Image } from "astro:assets";
+import type { Property } from "../../data/properties";
+
+interface Props {
+  property: Property;
+}
+
+const { property } = Astro.props;
+const isSold = property.status === "Sold";
+---
+
+<article
+  class="property-card group cursor-pointer flex flex-col bg-white border border-border hover:shadow-[0_8px_40px_rgba(0,0,0,0.09)] transition-all duration-500"
+  aria-label={`${property.status}: ${property.fullAddress}`}
+>
+  {/* Image container */}
+  <div class="relative overflow-hidden aspect-[4/3]">
+    <Image
+      src={property.image}
+      alt={property.imageAlt}
+      loading="lazy"
+      width={800}
+      height={600}
+      class="property-img w-full h-full object-cover object-center"
+    />
+    {/* Status badge */}
+    <div class="absolute top-4 left-4">
+      <span
+        class={`inline-block px-3 py-1 text-[9px] font-medium tracking-[0.2em] uppercase ${
+          isSold ? "bg-charcoal text-white" : "bg-gold text-white"
+        }`}
+      >
+        {property.status}
+      </span>
+    </div>
+  </div>
+
+  {/* Content */}
+  <div class="flex flex-col flex-1 p-6">
+    {!isSold && property.priceDisplay && (
+      <p class="font-serif text-charcoal text-2xl font-medium mb-2">
+        {property.priceDisplay}
+      </p>
+    )}
+
+    <p class="text-charcoal font-medium text-base leading-snug mb-1">
+      {property.address}
+    </p>
+    <p class="text-warm-gray text-[13px] mb-4">
+      {property.city}, {property.state} {property.zip}
+    </p>
+
+    {/* Specs */}
+    <div class="flex items-center gap-4 text-[12px] text-warm-gray font-medium border-t border-border pt-4 mt-auto">
+      <span class="flex items-center gap-1.5">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M1 9V5a1 1 0 011-1h10a1 1 0 011 1v4M1 9h12M1 9v3M13 9v3" stroke="#b8956a" stroke-width="1.2" stroke-linecap="round"/>
+          <path d="M5 4V3a1 1 0 011-1h2a1 1 0 011 1v1" stroke="#b8956a" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+        {property.bedrooms} {property.bedrooms === 1 ? "Bed" : "Beds"}
+      </span>
+      <span class="text-border">|</span>
+      <span class="flex items-center gap-1.5">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M1 7h12M7 7v5M2 7a5 5 0 0110 0" stroke="#b8956a" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+        {property.bathrooms} {property.bathrooms === 1 ? "Bath" : "Baths"}
+      </span>
+      <span class="text-border">|</span>
+      <span class="flex items-center gap-1.5">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <rect x="1.5" y="1.5" width="11" height="11" rx="0.5" stroke="#b8956a" stroke-width="1.2"/>
+          <path d="M4 4h6v6H4z" stroke="#b8956a" stroke-width="1.2"/>
+        </svg>
+        {property.sqftDisplay} Sq Ft
+      </span>
+    </div>
+
+    {/* CTA */}
+    {isSold ? (
+      <a
+        href={`/properties/${property.slug}`}
+        class="mt-5 inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.18em] uppercase text-gold hover:text-gold-dark transition-colors duration-200 group/link focus-visible:outline-gold"
+        aria-label={`View sale details for ${property.fullAddress}`}
+      >
+        View Sale
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 14 14"
+          fill="none"
+          class="transition-transform duration-300 group-hover/link:translate-x-1"
+        >
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
+    ) : (
+      <button
+        type="button"
+        data-enquiry-open
+        data-variant="buyer"
+        data-listing-id={property.id}
+        class="mt-5 inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.18em] uppercase text-gold hover:text-gold-dark transition-colors duration-200 group/link focus-visible:outline-gold"
+        aria-label={`Enquire about ${property.fullAddress}`}
+      >
+        Enquiry
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 14 14"
+          fill="none"
+          class="transition-transform duration-300 group-hover/link:translate-x-1"
+        >
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+    )}
+  </div>
+</article>

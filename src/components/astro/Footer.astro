@@ -1,0 +1,155 @@
+---
+import { Image } from "astro:assets";
+import { navLinks, siteConfig } from "../../data/site-config";
+import logo from "../../assets/branding/tarik-real-estate-logo.png";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-[#111] text-white" role="contentinfo">
+  <div class="max-w-350 mx-auto px-6 lg:px-10">
+    {/* Main footer grid */}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 py-16 lg:py-20 border-b border-white/10">
+      {/* Brand column */}
+      <div class="lg:col-span-1">
+        {/* Logo — the client's full, unmodified logo file */}
+        <div class="mb-6">
+          <Image src={logo} alt="Tarik Real Estate" class="h-24 w-auto object-contain" />
+        </div>
+
+        <p class="text-white/40 text-[13px] leading-relaxed max-w-55 mb-6">
+          Personal real estate guidance in Alexandria, Virginia and the Northern Virginia DMV area.
+        </p>
+
+        {/* Social links */}
+        <div class="flex items-center gap-3">
+          <a
+            href="https://instagram.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="w-9 h-9 border border-white/15 flex items-center justify-center text-white/40 hover:text-gold hover:border-gold transition-colors duration-200 focus-visible:outline-gold"
+            aria-label="Tarik Real Estate on Instagram"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" />
+              <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" />
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+            </svg>
+          </a>
+          <a
+            href="https://facebook.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="w-9 h-9 border border-white/15 flex items-center justify-center text-white/40 hover:text-gold hover:border-gold transition-colors duration-200 focus-visible:outline-gold"
+            aria-label="Tarik Real Estate on Facebook"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
+            </svg>
+          </a>
+          <a
+            href="https://linkedin.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="w-9 h-9 border border-white/15 flex items-center justify-center text-white/40 hover:text-gold hover:border-gold transition-colors duration-200 focus-visible:outline-gold"
+            aria-label="Tarik Real Estate on LinkedIn"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z" />
+              <rect x="2" y="9" width="4" height="12" />
+              <circle cx="4" cy="4" r="2" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <div>
+        <h3 class="text-white/50 text-[10px] tracking-[0.25em] uppercase font-medium mb-5">
+          Navigation
+        </h3>
+        <nav aria-label="Footer navigation">
+          <ul class="space-y-3">
+            {navLinks.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="text-white/50 text-[13px] hover:text-gold transition-colors duration-200 focus-visible:outline-gold"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+
+      {/* Contact */}
+      <div>
+        <h3 class="text-white/50 text-[10px] tracking-[0.25em] uppercase font-medium mb-5">
+          Contact
+        </h3>
+        <div class="space-y-3">
+          <div>
+            <p class="text-white/30 text-[10px] tracking-widest uppercase mb-1">Phone</p>
+            <a href={siteConfig.contact.phoneHref} class="text-white/50 text-[13px] hover:text-gold transition-colors duration-200 focus-visible:outline-gold">
+              {siteConfig.contact.phone}
+            </a>
+          </div>
+          <div>
+            <p class="text-white/30 text-[10px] tracking-widest uppercase mb-1">Email</p>
+            <a href={`mailto:${siteConfig.contact.email}`} class="text-white/50 text-[13px] hover:text-gold transition-colors duration-200 focus-visible:outline-gold">
+              {siteConfig.contact.email}
+            </a>
+          </div>
+          <div>
+            <p class="text-white/30 text-[10px] tracking-widest uppercase mb-1">Location</p>
+            <p class="text-white/50 text-[13px]">{siteConfig.contact.location}</p>
+            <p class="text-white/30 text-[11px]">{siteConfig.contact.serviceArea}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Areas served */}
+      <div>
+        <h3 class="text-white/50 text-[10px] tracking-[0.25em] uppercase font-medium mb-5">
+          Areas Served
+        </h3>
+        <ul class="space-y-2">
+          {siteConfig.areasServed.map((area) => (
+            <li>
+              <a
+                href={`/areas/${area.toLowerCase().replace(/\s+/g, "-")}`}
+                class="text-white/50 text-[13px] hover:text-gold transition-colors duration-200 focus-visible:outline-gold"
+              >
+                {area}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    {/* Bottom bar */}
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 py-6">
+      <p class="text-white/25 text-[11px] tracking-wide">
+        &copy; {year} Tarik Real Estate. All Rights Reserved.
+      </p>
+      <div class="flex items-center gap-6">
+        <a
+          href="/privacy"
+          class="text-white/25 text-[11px] hover:text-white/50 transition-colors duration-200 focus-visible:outline-gold"
+        >
+          Privacy Policy
+        </a>
+        <span class="text-white/15 text-[11px]">|</span>
+        <a
+          href="/terms"
+          class="text-white/25 text-[11px] hover:text-white/50 transition-colors duration-200 focus-visible:outline-gold"
+        >
+          Terms
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>

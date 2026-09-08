@@ -1,0 +1,81 @@
+---
+import { Image } from "astro:assets";
+---
+
+<section
+  class="relative w-full min-h-[88vh] lg:min-h-[92vh] flex items-end pt-24 lg:pt-28"
+  aria-label="Hero — Find your next home in Alexandria, Virginia"
+>
+  {/* Hero Background Image */}
+  <div class="absolute inset-0 overflow-hidden">
+    <Image
+      src="https://images.pexels.com/photos/8143683/pexels-photo-8143683.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1080&w=1920"
+      alt="Elegant brick mansion with manicured lawn — representative of premium real estate in Alexandria, Virginia"
+      width={1920}
+      height={1080}
+      class="w-full h-full object-cover object-center"
+      loading="eager"
+      fetchpriority="high"
+    />
+    {/* Layered overlay: bottom-weighted for text legibility */}
+    <div class="absolute inset-0 bg-linear-to-t from-black/80 via-black/35 to-black/20"></div>
+    <div class="absolute inset-0 bg-linear-to-r from-black/30 via-transparent to-transparent"></div>
+  </div>
+
+  {/* Scroll indicator */}
+  <div class="absolute bottom-8 right-8 lg:right-12 hidden lg:flex flex-col items-center gap-2 z-10">
+    <span class="text-white/40 text-[9px] tracking-[0.25em] uppercase font-medium rotate-90 mb-4">Scroll</span>
+    <div class="w-px h-12 bg-linear-to-b from-white/40 to-transparent animate-pulse"></div>
+  </div>
+
+  {/* Content */}
+  <div class="relative z-10 w-full max-w-350 mx-auto px-6 lg:px-10 pb-16 lg:pb-24">
+    <div class="max-w-3xl animate-fade-up">
+      {/* Eyebrow */}
+      <p class="text-gold text-[10px] tracking-[0.3em] uppercase font-medium mb-6">
+        Alexandria · Northern Virginia · DMV
+      </p>
+
+      {/* Headline */}
+      <h1 class="font-serif text-white text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-medium leading-[1.05] tracking-tight mb-6">
+        Find Your
+        <br />
+        Next Place
+        <br />
+        <em class="italic text-white/85">to Call Home.</em>
+      </h1>
+
+      {/* Subheadline */}
+      <p class="text-white/70 text-base lg:text-lg font-light leading-relaxed max-w-lg mb-10">
+        Local expertise. Personal service.
+        <br />
+        Real estate with a better approach.
+      </p>
+
+      {/* CTAs */}
+      <div class="flex flex-col sm:flex-row gap-4">
+        <a
+          href="#properties"
+          class="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gold text-white text-[11px] font-medium tracking-[0.2em] uppercase hover:bg-gold-dark transition-all duration-300 focus-visible:outline-white focus-visible:outline-offset-2 group"
+        >
+          Explore Properties
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            class="transition-transform duration-300 group-hover:translate-x-1"
+          >
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+        <a
+          href="#sell"
+          class="inline-flex items-center justify-center gap-3 px-8 py-4 border border-white/60 text-white text-[11px] font-medium tracking-[0.2em] uppercase hover:bg-white/10 hover:border-white transition-all duration-300 focus-visible:outline-white focus-visible:outline-offset-2"
+        >
+          Sell With Us
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

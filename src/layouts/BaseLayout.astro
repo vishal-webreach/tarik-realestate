@@ -1,0 +1,117 @@
+---
+import Header from "../components/react/Header";
+import Footer from "../components/astro/Footer.astro";
+import ScrollToTopButton from "../components/astro/ScrollToTopButton.astro";
+import EnquiryModal from "../components/react/EnquiryModal";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <!-- TODO: switch to "index, follow" once real contact info replaces the placeholders site-wide -->
+    <meta name="robots" content="noindex, nofollow" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Tarik Real Estate" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body>
+    <!-- Skip to main content — accessibility -->
+    <a
+      href="#main-content"
+      class="fixed -top-full left-4 z-200 px-4 py-2 bg-gold text-white text-sm font-medium focus:top-4 transition-all"
+    >
+      Skip to main content
+    </a>
+
+    <Header client:load />
+
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <ScrollToTopButton />
+
+    <EnquiryModal client:idle />
+
+    <script>
+      // Delegated click handler: any element with data-enquiry-open dispatches
+      // the enquiry:open event that EnquiryModal.tsx listens for. Keeps every
+      // trigger button in static Astro markup — no per-button hydration.
+      document.addEventListener("click", (event) => {
+        const trigger = (event.target as HTMLElement).closest<HTMLElement>("[data-enquiry-open]");
+        if (!trigger) return;
+        event.preventDefault();
+        window.dispatchEvent(
+          new CustomEvent("enquiry:open", {
+            detail: {
+              listingId: trigger.dataset.listingId,
+              variant: trigger.dataset.variant,
+            },
+          })
+        );
+      });
+
+      // Shared scroll-reveal: a single IntersectionObserver drives the
+      // `.reveal` → `.reveal.visible` transition (defined in global.css) for
+      // every static section on the page, instead of each section running
+      // its own observer.
+      // Exclude .reveal elements inside React islands (e.g. Testimonials) —
+      // those manage their own reveal state via useReveal() and would fight
+      // with this shared observer over the same DOM node, causing a
+      // hydration mismatch.
+      const revealTargets = Array.from(document.querySelectorAll<HTMLElement>(".reveal")).filter(
+        (el) => !el.closest("astro-island")
+      );
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (prefersReducedMotion) {
+        revealTargets.forEach((el) => el.classList.add("visible"));
+      } else {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+                observer.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.12 }
+        );
+        revealTargets.forEach((el) => observer.observe(el));
+      }
+    </script>
+  </body>
+</html>

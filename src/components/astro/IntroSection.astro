@@ -1,0 +1,81 @@
+---
+import { Image } from "astro:assets";
+---
+
+<section
+  class="py-20 lg:py-32 px-6 lg:px-10 bg-cream-dark"
+  aria-labelledby="intro-heading"
+>
+  <div class="max-w-350 mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+      {/* Text side */}
+      <div class="reveal">
+        <span class="section-divider mb-5" aria-hidden="true"></span>
+        <p class="text-[10px] font-medium tracking-[0.3em] uppercase text-gold mb-4">
+          Our Approach
+        </p>
+        <h2
+          id="intro-heading"
+          class="font-serif text-charcoal text-3xl lg:text-4xl xl:text-5xl font-medium leading-tight mb-6"
+        >
+          Real Estate,
+          <br />
+          Done Differently.
+        </h2>
+
+        <div class="space-y-4 text-warm-gray text-base leading-relaxed max-w-lg">
+          <p>
+            A more personal approach to buying and selling real estate.
+          </p>
+          <p>
+            Tarik Real Estate combines local knowledge, strategic guidance,
+            and personal service to help clients make confident real estate
+            decisions in Alexandria, Northern Virginia, and the greater DMV area.
+          </p>
+          <p>
+            Whether you're buying your first home, selling a property you've
+            loved, or searching for the right investment — the process
+            deserves care and expertise every step of the way.
+          </p>
+        </div>
+
+        <a
+          href="#about"
+          class="inline-flex items-center gap-2 mt-8 text-[11px] font-medium tracking-[0.2em] uppercase text-charcoal hover:text-gold transition-colors duration-200 group focus-visible:outline-gold pb-1 border-b border-charcoal hover:border-gold"
+        >
+          Learn More
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="none"
+            class="transition-transform duration-300 group-hover:translate-x-1"
+          >
+            <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+      </div>
+
+      {/* Image side */}
+      <div class="reveal reveal-delay-2">
+        <div class="relative">
+          <div class="relative overflow-hidden aspect-[4/5] lg:aspect-[3/4]">
+            <Image
+              src="https://images.pexels.com/photos/8089172/pexels-photo-8089172.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=900&w=700"
+              alt="Beautifully designed modern living room interior representing premium Alexandria real estate"
+              loading="lazy"
+              width={700}
+              height={900}
+              class="w-full h-full object-cover object-center"
+            />
+          </div>
+          {/* Accent border */}
+          <div
+            class="absolute -bottom-4 -right-4 lg:-bottom-5 lg:-right-5 w-2/3 h-2/3 border border-gold/30 -z-10 hidden sm:block"
+            aria-hidden="true"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
