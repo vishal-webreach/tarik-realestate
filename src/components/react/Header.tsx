@@ -81,7 +81,7 @@ export default function Header() {
         <div className="flex items-center justify-between h-18 lg:h-20">
           {/* Logo */}
           <a
-            href="/"
+            href={import.meta.env.BASE_URL}
             className="flex items-center gap-3 group focus-visible:outline-gold"
             aria-label="Tarik Real Estate — Home"
           >
