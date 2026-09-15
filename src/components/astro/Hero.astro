@@ -1,5 +1,6 @@
 ---
 import { Image } from "astro:assets";
+import heroImage from "../../assets/photos/brickMansion.jpg";
 ---
 
 <section
@@ -9,7 +10,7 @@ import { Image } from "astro:assets";
   {/* Hero Background Image */}
   <div class="absolute inset-0 overflow-hidden">
     <Image
-      src="https://images.pexels.com/photos/8143683/pexels-photo-8143683.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1080&w=1920"
+      src={heroImage}
       alt="Elegant brick mansion with manicured lawn — representative of premium real estate in Alexandria, Virginia"
       width={1920}
       height={1080}

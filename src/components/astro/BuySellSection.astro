@@ -1,5 +1,7 @@
 ---
 import { Image } from "astro:assets";
+import buyImage from "../../assets/buy-sell/buyHome.jpg";
+import sellImage from "../../assets/buy-sell/sellHome.jpg";
 ---
 
 <section
@@ -12,7 +14,7 @@ import { Image } from "astro:assets";
     {/* Background image */}
     <div class="absolute inset-0">
       <Image
-        src="https://images.pexels.com/photos/7174113/pexels-photo-7174113.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=800&w=900"
+        src={buyImage}
         alt="Modern living room interior — buy your next home in Alexandria, Virginia"
         loading="lazy"
         width={900}
@@ -57,7 +59,7 @@ import { Image } from "astro:assets";
     {/* Background image */}
     <div class="absolute inset-0">
       <Image
-        src="https://images.pexels.com/photos/8082316/pexels-photo-8082316.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=800&w=900"
+        src={sellImage}
         alt="Contemporary kitchen interior — sell your home with Tarik Real Estate"
         loading="lazy"
         width={900}

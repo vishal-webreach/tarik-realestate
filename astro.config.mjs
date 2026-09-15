@@ -12,10 +12,6 @@ export default defineConfig({
 
   integrations: [react()],
 
-  image: {
-    remotePatterns: [{ protocol: 'https', hostname: 'images.pexels.com' }]
-  },
-
   vite: {
     plugins: [tailwindcss()]
   }

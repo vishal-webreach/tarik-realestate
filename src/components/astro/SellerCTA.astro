@@ -1,5 +1,6 @@
 ---
 import { Image } from "astro:assets";
+import sellerCtaImage from "../../assets/buy-sell/sellerCta.jpg";
 ---
 
 <section
@@ -10,7 +11,7 @@ import { Image } from "astro:assets";
   {/* Background */}
   <div class="absolute inset-0">
     <Image
-      src="https://images.pexels.com/photos/36595190/pexels-photo-36595190.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=800&w=1600"
+      src={sellerCtaImage}
       alt="Elegant Tudor Revival home representing properties represented by Tarik Real Estate"
       loading="lazy"
       width={1600}

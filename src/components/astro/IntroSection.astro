@@ -1,5 +1,6 @@
 ---
 import { Image } from "astro:assets";
+import introImage from "../../assets/photos/livingRoom.jpg";
 ---
 
 <section
@@ -61,7 +62,7 @@ import { Image } from "astro:assets";
         <div class="relative">
           <div class="relative overflow-hidden aspect-[4/5] lg:aspect-[3/4]">
             <Image
-              src="https://images.pexels.com/photos/8089172/pexels-photo-8089172.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=900&w=700"
+              src={introImage}
               alt="Beautifully designed modern living room interior representing premium Alexandria real estate"
               loading="lazy"
               width={700}
