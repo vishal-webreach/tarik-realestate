@@ -1,0 +1,336 @@
+---
+import { getImage } from "astro:assets";
+import { featuredProperties, recentSales } from "../../data/properties";
+
+const rawProperties = [...featuredProperties, ...recentSales].filter((p) => p.details);
+
+// Pre-generate every gallery photo's optimized webp URL at build time, but
+// don't wire any of them up as a real <img src> here — only the first photo
+// loads eagerly. The rest stay behind data-src and are only fetched by the
+// gallery script when the visitor actually navigates to them, since a
+// visitor who closes the modal after 2 photos shouldn't pay for all 25.
+const properties = await Promise.all(
+  rawProperties.map(async (property) => {
+    const gallery = await Promise.all(
+      property.details!.gallery.map((img) => getImage({ src: img, width: 1000, height: 667, format: "webp" }))
+    );
+    return { property, gallery };
+  })
+);
+---
+
+{properties.length > 0 && (
+  <div
+    data-property-modal
+    class="hidden fixed inset-0 z-200 items-center justify-center bg-charcoal/80 p-4"
+  >
+    <div
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+      data-property-dialog
+      class="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-cream shadow-2xl outline-none animate-scale-in"
+    >
+      <button
+        type="button"
+        data-property-close
+        aria-label="Close"
+        class="absolute top-4 right-4 z-20 w-9 h-9 flex items-center justify-center bg-cream/90 text-warm-gray-light hover:text-charcoal focus-visible:outline-gold transition-colors duration-200"
+      >
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+          <path d="M12 4L4 12M4 4l8 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+        </svg>
+      </button>
+
+      {properties.map(({ property, gallery }) => {
+        const d = property.details!;
+        return (
+          <div data-property-panel={property.id} hidden>
+            {/* Image gallery — only the first photo ships a real src; the
+               rest carry data-src and are fetched on demand by the gallery
+               script below as the visitor navigates to them. */}
+            <div class="relative overflow-hidden aspect-[3/2] bg-charcoal" data-gallery={property.id}>
+              {gallery.map((img, i) => (
+                <div class="gallery-slide absolute inset-0" class:list={{ "is-active": i === 0 }} data-gallery-slide>
+                  <img
+                    src={i === 0 ? img.src : undefined}
+                    data-src={img.src}
+                    alt={`${property.fullAddress} — photo ${i + 1} of ${gallery.length}`}
+                    width={img.attributes.width}
+                    height={img.attributes.height}
+                    class="w-full h-full object-cover object-center"
+                  />
+                </div>
+              ))}
+              <div class="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
+
+              <button
+                type="button"
+                data-gallery-prev
+                aria-label="Previous photo"
+                class="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-white/90 hover:bg-white text-charcoal transition-colors duration-200 focus-visible:outline-gold"
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M9 3L5 7l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                data-gallery-next
+                aria-label="Next photo"
+                class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-white/90 hover:bg-white text-charcoal transition-colors duration-200 focus-visible:outline-gold"
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+
+              <span
+                data-gallery-counter
+                class="absolute bottom-3 right-3 px-2.5 py-1 bg-black/60 text-white text-[11px] font-medium tracking-wide"
+              >
+                1 / {gallery.length}
+              </span>
+              <span class="absolute top-3 left-3">
+                <span
+                  class={`inline-block px-3 py-1 text-[9px] font-medium tracking-[0.2em] uppercase ${
+                    property.status === "Sold" ? "bg-charcoal text-white" : "bg-gold text-white"
+                  }`}
+                >
+                  {property.status}
+                </span>
+              </span>
+            </div>
+
+            {/* Content */}
+            <div class="p-6 lg:p-10">
+              <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 mb-6">
+                <div>
+                  <h2
+                    id={`property-modal-title-${property.id}`}
+                    class="font-serif text-charcoal text-2xl lg:text-3xl font-medium leading-snug"
+                  >
+                    {property.fullAddress}
+                  </h2>
+                  <p class="text-warm-gray text-[13px] mt-1">
+                    {d.homeType} · Built {d.yearBuilt}
+                    {d.majorRemodelYear ? ` (remodeled ${d.majorRemodelYear})` : ""}
+                  </p>
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(property.fullAddress)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1.5 mt-2 text-[11px] font-medium tracking-[0.15em] uppercase text-gold hover:text-gold-dark transition-colors duration-200 group/map focus-visible:outline-gold"
+                  >
+                    View on Google Maps
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 14 14"
+                      fill="none"
+                      class="transition-transform duration-300 group-hover/map:translate-x-1"
+                    >
+                      <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </a>
+                </div>
+                {property.priceDisplay && (
+                  <p class="font-serif text-gold text-3xl font-medium shrink-0">{property.priceDisplay}</p>
+                )}
+              </div>
+
+              {/* Key facts */}
+              <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 py-5 border-y border-border mb-6">
+                <div>
+                  <p class="text-charcoal font-medium text-base">{property.bedrooms}</p>
+                  <p class="text-warm-gray-light text-[11px] uppercase tracking-wide mt-0.5">Beds</p>
+                </div>
+                <div>
+                  <p class="text-charcoal font-medium text-base">{property.bathrooms}</p>
+                  <p class="text-warm-gray-light text-[11px] uppercase tracking-wide mt-0.5">Baths</p>
+                </div>
+                <div>
+                  <p class="text-charcoal font-medium text-base">{property.sqftDisplay}</p>
+                  <p class="text-warm-gray-light text-[11px] uppercase tracking-wide mt-0.5">Sq Ft</p>
+                </div>
+                <div>
+                  <p class="text-charcoal font-medium text-base">{d.lotSize}</p>
+                  <p class="text-warm-gray-light text-[11px] uppercase tracking-wide mt-0.5">Lot Size</p>
+                </div>
+                <div>
+                  <p class="text-charcoal font-medium text-base">{d.pricePerSqft}</p>
+                  <p class="text-warm-gray-light text-[11px] uppercase tracking-wide mt-0.5">Price/Sq Ft</p>
+                </div>
+              </div>
+
+              {/* What's special */}
+              {d.whatsSpecial.length > 0 && (
+                <div class="mb-6">
+                  <p class="text-[10px] font-medium tracking-[0.2em] uppercase text-gold mb-3">What's Special</p>
+                  <div class="flex flex-wrap gap-2">
+                    {d.whatsSpecial.map((tag) => (
+                      <span class="px-3 py-1.5 bg-cream-dark border border-border text-[12px] text-charcoal">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Description */}
+              <div class="mb-8">
+                <p class="text-warm-gray text-[14px] leading-relaxed">{d.description}</p>
+              </div>
+
+              {/* Facts & features */}
+              <div class="mb-8">
+                <p class="font-serif text-charcoal text-xl font-medium mb-5">Facts &amp; Features</p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-8">
+                  {d.factSections.map((section) => (
+                    <div>
+                      <p class="text-[10px] font-medium tracking-[0.2em] uppercase text-gold mb-3">
+                        {section.heading}
+                      </p>
+                      <dl class="space-y-2">
+                        {section.facts.map((fact) => (
+                          <div class="flex gap-3 text-[13px] leading-relaxed">
+                            <dt class="text-warm-gray-light shrink-0 w-36">{fact.label}</dt>
+                            <dd class="text-charcoal">{fact.value}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-6 border-t border-border">
+                <p class="text-warm-gray-light text-[12px]">Listed by {d.listedBy}</p>
+                <button
+                  type="button"
+                  data-enquiry-open
+                  data-variant="buyer"
+                  data-listing-id={property.id}
+                  class="inline-flex items-center justify-center gap-3 px-8 py-3.5 bg-charcoal text-white text-[11px] font-medium tracking-[0.2em] uppercase hover:bg-gold transition-all duration-300 focus-visible:outline-gold group"
+                >
+                  Contact Now
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="transition-transform duration-300 group-hover:translate-x-1">
+                    <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+)}
+
+<script>
+  // Dependency-free modal, same pattern as the article/legal modals — every
+  // property's full details are pre-rendered and toggled by id.
+  const modal = document.querySelector<HTMLElement>("[data-property-modal]");
+  const dialog = document.querySelector<HTMLElement>("[data-property-dialog]");
+  const panels = Array.from(document.querySelectorAll<HTMLElement>("[data-property-panel]"));
+
+  if (modal && dialog && panels.length) {
+    let previouslyFocused: HTMLElement | null = null;
+
+    // Fetches a gallery slide's photo the first time it becomes active,
+    // instead of upfront — swapping opacity (not display:none) means a
+    // browser's native loading="lazy" would otherwise still count every
+    // slide as "in viewport" and fetch all of them at once.
+    const loadSlideImage = (slide: HTMLElement | undefined) => {
+      // Once loaded, drop data-src so this is a no-op on repeat visits to
+      // the same photo instead of re-requesting it every time.
+      const img = slide?.querySelector<HTMLImageElement>("img[data-src]");
+      if (img) {
+        img.src = img.dataset.src!;
+        img.removeAttribute("data-src");
+      }
+    };
+
+    const openProperty = (id: string) => {
+      panels.forEach((panel) => {
+        panel.hidden = panel.dataset.propertyPanel !== id;
+      });
+      const openedPanel = panels.find((p) => p.dataset.propertyPanel === id);
+      loadSlideImage(openedPanel?.querySelector<HTMLElement>("[data-gallery-slide].is-active") ?? undefined);
+      dialog.setAttribute("aria-labelledby", `property-modal-title-${id}`);
+      previouslyFocused = document.activeElement as HTMLElement | null;
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+      dialog.scrollTop = 0;
+      dialog.focus({ preventScroll: true });
+    };
+
+    const closeProperty = () => {
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+      previouslyFocused?.focus({ preventScroll: true });
+    };
+
+    document.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+
+      const trigger = target.closest<HTMLElement>("[data-property-open]");
+      if (trigger) {
+        event.preventDefault();
+        const id = trigger.dataset.propertyId;
+        if (id) openProperty(id);
+        return;
+      }
+
+      if (!modal.classList.contains("hidden")) {
+        if (target === modal || target.closest("[data-property-close]")) {
+          closeProperty();
+          return;
+        }
+
+        // Gallery navigation, scoped to whichever panel is currently open.
+        const galleryEl = target.closest<HTMLElement>("[data-gallery]");
+        const navBtn = target.closest<HTMLElement>("[data-gallery-prev], [data-gallery-next]");
+        if (galleryEl && navBtn) {
+          const slides = Array.from(galleryEl.querySelectorAll<HTMLElement>("[data-gallery-slide]"));
+          const counter = galleryEl.querySelector<HTMLElement>("[data-gallery-counter]");
+          const current = slides.findIndex((s) => s.classList.contains("is-active"));
+          const direction = navBtn.hasAttribute("data-gallery-next") ? 1 : -1;
+          const next = (current + direction + slides.length) % slides.length;
+          slides[current]?.classList.remove("is-active");
+          slides[next]?.classList.add("is-active");
+          loadSlideImage(slides[next]);
+          if (counter) counter.textContent = `${next + 1} / ${slides.length}`;
+        }
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !modal.classList.contains("hidden")) {
+        // The enquiry modal can open on top of this one (Contact Now) and
+        // has its own Escape handler — let it close first so a single
+        // Escape press doesn't dismiss both stacked modals at once.
+        const enquiryModalOpen = document.getElementById("enquiry-modal-title");
+        if (enquiryModalOpen) return;
+        closeProperty();
+      }
+    });
+  }
+</script>
+
+<style>
+  .gallery-slide {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .gallery-slide.is-active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+</style>

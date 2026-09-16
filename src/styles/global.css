@@ -65,6 +65,18 @@ body {
   border-radius: 2px;
 }
 
+/* Text/select-style form fields rely on their border-color change on
+   focus instead — the outline ring stays for everything else (buttons,
+   links, cards). Kept unlayered like the rule above so it can actually
+   win against it (Tailwind's focus-visible:outline-none utility lives in
+   @layer utilities, which unlayered CSS always beats regardless of
+   specificity). */
+input:focus-visible,
+textarea:focus-visible,
+[aria-haspopup="listbox"]:focus-visible {
+  outline: none;
+}
+
 /* Animations */
 @keyframes fadeUp {
   from {

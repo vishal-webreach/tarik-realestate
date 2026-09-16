@@ -22,7 +22,7 @@ const isSold = property.status === "Sold";
       loading="lazy"
       width={800}
       height={600}
-      class="property-img w-full h-full object-cover object-center"
+      class={`property-img w-full h-full object-cover object-center ${isSold ? "grayscale" : ""}`}
     />
     {/* Status badge */}
     <div class="absolute top-4 left-4">
@@ -38,7 +38,7 @@ const isSold = property.status === "Sold";
 
   {/* Content */}
   <div class="flex flex-col flex-1 p-6">
-    {!isSold && property.priceDisplay && (
+    {property.priceDisplay && (
       <p class="font-serif text-charcoal text-2xl font-medium mb-2">
         {property.priceDisplay}
       </p>
@@ -78,43 +78,65 @@ const isSold = property.status === "Sold";
     </div>
 
     {/* CTA */}
-    {isSold ? (
-      <a
-        href={`/properties/${property.slug}`}
-        class="mt-5 inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.18em] uppercase text-gold hover:text-gold-dark transition-colors duration-200 group/link focus-visible:outline-gold"
-        aria-label={`View sale details for ${property.fullAddress}`}
-      >
-        View Sale
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 14 14"
-          fill="none"
-          class="transition-transform duration-300 group-hover/link:translate-x-1"
+    {!isSold && (
+      <div class="mt-5 flex items-center gap-5">
+        {property.details ? (
+          <button
+            type="button"
+            data-property-open
+            data-property-id={property.id}
+            class="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.18em] uppercase text-gold hover:text-gold-dark transition-colors duration-200 group/link focus-visible:outline-gold"
+            aria-label={`Know more about ${property.fullAddress}`}
+          >
+            Know More
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              class="transition-transform duration-300 group-hover/link:translate-x-1"
+            >
+              <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        ) : (
+          <a
+            href={`/properties/${property.slug}`}
+            class="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.18em] uppercase text-gold hover:text-gold-dark transition-colors duration-200 group/link focus-visible:outline-gold"
+            aria-label={`Know more about ${property.fullAddress}`}
+          >
+            Know More
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              class="transition-transform duration-300 group-hover/link:translate-x-1"
+            >
+              <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </a>
+        )}
+        <button
+          type="button"
+          data-enquiry-open
+          data-variant="buyer"
+          data-listing-id={property.id}
+          class="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.18em] uppercase text-gold hover:text-gold-dark transition-colors duration-200 group/link focus-visible:outline-gold"
+          aria-label={`Contact us about ${property.fullAddress}`}
         >
-          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </a>
-    ) : (
-      <button
-        type="button"
-        data-enquiry-open
-        data-variant="buyer"
-        data-listing-id={property.id}
-        class="mt-5 inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.18em] uppercase text-gold hover:text-gold-dark transition-colors duration-200 group/link focus-visible:outline-gold"
-        aria-label={`Enquire about ${property.fullAddress}`}
-      >
-        Enquiry
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 14 14"
-          fill="none"
-          class="transition-transform duration-300 group-hover/link:translate-x-1"
-        >
-          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </button>
+          Contact Now
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="none"
+            class="transition-transform duration-300 group-hover/link:translate-x-1"
+          >
+            <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </div>
     )}
   </div>
 </article>

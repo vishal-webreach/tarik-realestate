@@ -1,26 +1,32 @@
 ---
 import { Image } from "astro:assets";
-import heroImage from "../../assets/photos/brickMansion.jpg";
+import { heroSlides } from "../../data/heroSlides";
 ---
 
 <section
   class="relative w-full min-h-[88vh] lg:min-h-[92vh] flex items-end pt-24 lg:pt-28"
-  aria-label="Hero — Find your next home in Alexandria, Virginia"
+  aria-label="Find your next home in Alexandria, Virginia"
+  data-hero-slider
 >
-  {/* Hero Background Image */}
+  {/* Slide backgrounds */}
   <div class="absolute inset-0 overflow-hidden">
-    <Image
-      src={heroImage}
-      alt="Elegant brick mansion with manicured lawn — representative of premium real estate in Alexandria, Virginia"
-      width={1920}
-      height={1080}
-      class="w-full h-full object-cover object-center"
-      loading="eager"
-      fetchpriority="high"
-    />
-    {/* Layered overlay: bottom-weighted for text legibility */}
-    <div class="absolute inset-0 bg-linear-to-t from-black/80 via-black/35 to-black/20"></div>
-    <div class="absolute inset-0 bg-linear-to-r from-black/30 via-transparent to-transparent"></div>
+    {heroSlides.map((slide, i) => (
+      <div class="hero-slide absolute inset-0" class:list={{ "is-active": i === 0 }} data-slide>
+        <Image
+          src={slide.image}
+          alt=""
+          width={1920}
+          height={1080}
+          class="w-full h-full object-cover object-center"
+          loading={i === 0 ? "eager" : "lazy"}
+          fetchpriority={i === 0 ? "high" : "low"}
+        />
+      </div>
+    ))}
+    {/* Layered overlay: bottom-weighted for text legibility. Explicit z-10
+       keeps it above every slide regardless of which one is active. */}
+    <div class="absolute inset-0 z-10 bg-linear-to-t from-black/80 via-black/35 to-black/20"></div>
+    <div class="absolute inset-0 z-10 bg-linear-to-r from-black/30 via-transparent to-transparent"></div>
   </div>
 
   {/* Scroll indicator */}
@@ -32,51 +38,217 @@ import heroImage from "../../assets/photos/brickMansion.jpg";
   {/* Content */}
   <div class="relative z-10 w-full max-w-350 mx-auto px-6 lg:px-10 pb-16 lg:pb-24">
     <div class="max-w-3xl animate-fade-up">
-      {/* Eyebrow */}
-      <p class="text-gold text-[10px] tracking-[0.3em] uppercase font-medium mb-6">
-        Alexandria · Northern Virginia · DMV
-      </p>
-
-      {/* Headline */}
-      <h1 class="font-serif text-white text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-medium leading-[1.05] tracking-tight mb-6">
-        Find Your
-        <br />
-        Next Place
-        <br />
-        <em class="italic text-white/85">to Call Home.</em>
-      </h1>
-
-      {/* Subheadline */}
-      <p class="text-white/70 text-base lg:text-lg font-light leading-relaxed max-w-lg mb-10">
-        Local expertise. Personal service.
-        <br />
-        Real estate with a better approach.
-      </p>
-
-      {/* CTAs */}
-      <div class="flex flex-col sm:flex-row gap-4">
-        <a
-          href="#properties"
-          class="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gold text-white text-[11px] font-medium tracking-[0.2em] uppercase hover:bg-gold-dark transition-all duration-300 focus-visible:outline-white focus-visible:outline-offset-2 group"
-        >
-          Explore Properties
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            class="transition-transform duration-300 group-hover:translate-x-1"
+      {/* Slide copy — all stacked in one grid cell, crossfaded via .is-active */}
+      <div class="grid">
+        {heroSlides.map((slide, i) => (
+          <div
+            class="hero-content col-start-1 row-start-1"
+            class:list={{ "is-active": i === 0 }}
+            data-slide-content
+            inert={i !== 0}
           >
-            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-        </a>
-        <a
-          href="#sell"
-          class="inline-flex items-center justify-center gap-3 px-8 py-4 border border-white/60 text-white text-[11px] font-medium tracking-[0.2em] uppercase hover:bg-white/10 hover:border-white transition-all duration-300 focus-visible:outline-white focus-visible:outline-offset-2"
-        >
-          Sell With Us
-        </a>
+            {/* Eyebrow */}
+            <p class="text-gold text-[10px] tracking-[0.3em] uppercase font-medium mb-6">
+              {slide.eyebrow}
+            </p>
+
+            {/* Headline */}
+            <h1 class="font-serif text-white text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-medium leading-[1.05] tracking-tight mb-6">
+              {slide.heading.map((line) => (
+                <>
+                  {line}
+                  <br />
+                </>
+              ))}
+              <em class="italic text-white/85">{slide.emphasis}</em>
+            </h1>
+
+            {/* Subheadline */}
+            <p class="text-white/70 text-base lg:text-lg font-light leading-relaxed max-w-lg mb-10">
+              {slide.subheading.map((line, idx) => (
+                <>
+                  {idx > 0 && <br />}
+                  {line}
+                </>
+              ))}
+            </p>
+
+            {/* CTAs */}
+            <div class="flex flex-col sm:flex-row gap-4">
+              {slide.primaryCta.href ? (
+                <a
+                  href={slide.primaryCta.href}
+                  class="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gold text-white text-[11px] font-medium tracking-[0.2em] uppercase hover:bg-gold-dark transition-all duration-300 focus-visible:outline-white focus-visible:outline-offset-2 group"
+                >
+                  {slide.primaryCta.label}
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    class="transition-transform duration-300 group-hover:translate-x-1"
+                  >
+                    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  data-enquiry-open
+                  data-variant={slide.primaryCta.variant}
+                  class="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gold text-white text-[11px] font-medium tracking-[0.2em] uppercase hover:bg-gold-dark transition-all duration-300 focus-visible:outline-white focus-visible:outline-offset-2 group"
+                >
+                  {slide.primaryCta.label}
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    class="transition-transform duration-300 group-hover:translate-x-1"
+                  >
+                    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
+              )}
+              {slide.secondaryCta.href ? (
+                <a
+                  href={slide.secondaryCta.href}
+                  class="inline-flex items-center justify-center gap-3 px-8 py-4 border border-white/60 text-white text-[11px] font-medium tracking-[0.2em] uppercase hover:bg-white/10 hover:border-white transition-all duration-300 focus-visible:outline-white focus-visible:outline-offset-2"
+                >
+                  {slide.secondaryCta.label}
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  data-enquiry-open
+                  data-variant={slide.secondaryCta.variant}
+                  class="inline-flex items-center justify-center gap-3 px-8 py-4 border border-white/60 text-white text-[11px] font-medium tracking-[0.2em] uppercase hover:bg-white/10 hover:border-white transition-all duration-300 focus-visible:outline-white focus-visible:outline-offset-2"
+                >
+                  {slide.secondaryCta.label}
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
+
+      {/* Slide navigation */}
+      {heroSlides.length > 1 && (
+        <div class="flex items-center gap-2 mt-12" role="group" aria-label="Hero slides">
+          {heroSlides.map((slide, i) => (
+            <button
+              type="button"
+              class="hero-dot transition-all duration-300 focus-visible:outline-white"
+              class:list={{ "is-active": i === 0 }}
+              data-dot
+              aria-label={`Show slide ${i + 1}: ${slide.eyebrow}`}
+              aria-current={i === 0 ? "true" : "false"}
+            />
+          ))}
+        </div>
+      )}
     </div>
   </div>
 </section>
+
+<style>
+  .hero-slide {
+    opacity: 0;
+    transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .hero-slide.is-active {
+    opacity: 1;
+  }
+
+  .hero-content {
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .hero-content.is-active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .hero-dot {
+    width: 28px;
+    height: 2px;
+    background-color: rgb(255 255 255 / 0.3);
+  }
+  .hero-dot.is-active {
+    background-color: var(--color-gold);
+  }
+  .hero-dot:hover {
+    background-color: rgb(255 255 255 / 0.6);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-slide,
+    .hero-content {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // Dependency-free slider: swaps `.is-active` on data-attributed nodes.
+  // No framework/hydration cost on the LCP-critical hero.
+  const hero = document.querySelector<HTMLElement>("[data-hero-slider]");
+  if (hero) {
+    const slides = Array.from(hero.querySelectorAll<HTMLElement>("[data-slide]"));
+    const contents = Array.from(hero.querySelectorAll<HTMLElement>("[data-slide-content]"));
+    const dots = Array.from(hero.querySelectorAll<HTMLButtonElement>("[data-dot]"));
+    const total = slides.length;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let current = 0;
+    let timer: number | undefined;
+
+    const show = (index: number) => {
+      current = (index + total) % total;
+      slides.forEach((slide, i) => slide.classList.toggle("is-active", i === current));
+      contents.forEach((content, i) => {
+        const active = i === current;
+        content.classList.toggle("is-active", active);
+        content.inert = !active;
+      });
+      dots.forEach((dot, i) => {
+        dot.classList.toggle("is-active", i === current);
+        dot.setAttribute("aria-current", String(i === current));
+      });
+
+      // Bump the next image to eager once the user is actively browsing,
+      // so the upcoming crossfade never reveals an unloaded frame.
+      const upcoming = slides[(current + 1) % total]?.querySelector("img");
+      if (upcoming instanceof HTMLImageElement) upcoming.loading = "eager";
+    };
+
+    const stop = () => window.clearInterval(timer);
+    const start = () => {
+      if (reduceMotion || total < 2) return;
+      stop();
+      timer = window.setInterval(() => show(current + 1), 6000);
+    };
+
+    dots.forEach((dot, i) =>
+      dot.addEventListener("click", () => {
+        show(i);
+        start();
+      })
+    );
+
+    hero.addEventListener("mouseenter", stop);
+    hero.addEventListener("mouseleave", start);
+    hero.addEventListener("focusin", stop);
+    hero.addEventListener("focusout", start);
+    document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+
+    // Only run the timer while the hero is actually on screen.
+    new IntersectionObserver(([entry]) => (entry.isIntersecting ? start() : stop()), {
+      threshold: 0.2,
+    }).observe(hero);
+  }
+</script>

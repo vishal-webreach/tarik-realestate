@@ -9,27 +9,59 @@ import { serviceAreas } from "../../data/areas";
   aria-labelledby="areas-heading"
 >
   <div class="max-w-350 mx-auto">
-    <div class="reveal mb-14">
-      <span class="section-divider mb-5" aria-hidden="true"></span>
-      <p class="text-[10px] font-medium tracking-[0.3em] uppercase text-gold mb-4">
-        Service Areas
-      </p>
-      <h2
-        id="areas-heading"
-        class="font-serif text-charcoal text-3xl lg:text-4xl xl:text-5xl font-medium leading-tight max-w-lg"
-      >
-        Local Knowledge.
-        <br />
-        Real Connections.
-      </h2>
-      <p class="text-warm-gray text-base mt-4 max-w-xl leading-relaxed">
-        Deep familiarity with Alexandria, Northern Virginia, and the broader DMV market means better guidance at every step.
-      </p>
-    </div>
+    <div class="areas-grid">
+      <div class="reveal areas-heading">
+        <span class="section-divider mb-5" aria-hidden="true"></span>
+        <p class="text-[10px] font-medium tracking-[0.3em] uppercase text-gold mb-4">
+          Service Areas
+        </p>
+        <h2
+          id="areas-heading"
+          class="font-serif text-charcoal text-3xl lg:text-4xl xl:text-5xl font-medium leading-tight max-w-lg"
+        >
+          Local Knowledge.
+          <br />
+          Real Connections.
+        </h2>
+        <p class="text-warm-gray text-base mt-4 max-w-xl leading-relaxed">
+          Deep familiarity with Alexandria, Northern Virginia, and the broader DMV market means better guidance at every step.
+        </p>
+      </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
-      {serviceAreas.map((area, index) => (
-        <div class="reveal" style={`transition-delay: ${index * 80}ms`}>
+      {/* Slider navigation */}
+      <div class="areas-nav flex items-center gap-3" role="group" aria-label="Service area navigation">
+        <button
+          type="button"
+          data-areas-prev
+          aria-label="Previous areas"
+          class="w-10 h-10 border border-charcoal/15 flex items-center justify-center text-charcoal/50 hover:border-gold hover:text-gold transition-colors duration-200 focus-visible:outline-gold"
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M9 3L5 7l4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          data-areas-next
+          aria-label="Next areas"
+          class="w-10 h-10 border border-charcoal/15 flex items-center justify-center text-charcoal/50 hover:border-gold hover:text-gold transition-colors duration-200 focus-visible:outline-gold"
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Card slider */}
+      <div
+        data-areas-track
+        class="areas-track reveal reveal-delay-1 flex gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      >
+      {serviceAreas.map((area) => (
+        <div
+          class="shrink-0 snap-start w-[80%] sm:w-[calc((100%_-_1.25rem)/2)] lg:w-[calc((100%_-_2.5rem)/3)] xl:w-[calc((100%_-_5rem)/5)]"
+          data-area-card
+        >
           <a
             href={`/areas/${area.slug}`}
             class="group block relative overflow-hidden aspect-[3/4] focus-visible:outline-gold"
@@ -51,7 +83,7 @@ import { serviceAreas } from "../../data/areas";
               <p class="text-white/60 text-[12px] leading-relaxed line-clamp-2 mb-3">
                 {area.description}
               </p>
-              <div class="flex items-center gap-2 text-gold text-[10px] tracking-[0.2em] uppercase font-medium">
+              <div class="hidden items-center gap-2 text-gold text-[10px] tracking-[0.2em] uppercase font-medium">
                 <span>Explore</span>
                 <svg
                   width="12"
@@ -67,6 +99,53 @@ import { serviceAreas } from "../../data/areas";
           </a>
         </div>
       ))}
+      </div>
     </div>
   </div>
 </section>
+
+<style>
+  /* Mobile/tablet: heading, then cards, then nav buttons below the cards.
+     Desktop: nav buttons sit beside the heading, cards span below both. */
+  .areas-grid {
+    display: grid;
+    grid-template-areas: "heading" "track" "nav";
+    row-gap: 1.75rem;
+  }
+  .areas-heading { grid-area: heading; }
+  .areas-track { grid-area: track; }
+  .areas-nav { grid-area: nav; justify-self: start; }
+
+  @media (min-width: 1024px) {
+    .areas-grid {
+      grid-template-columns: 1fr auto;
+      grid-template-areas: "heading nav" "track track";
+      column-gap: 1.5rem;
+      row-gap: 3.5rem;
+      align-items: end;
+    }
+    .areas-nav { justify-self: end; }
+  }
+</style>
+
+<script>
+  // Dependency-free slider, same pattern as the Hero: scroll the track by
+  // one card-width per click instead of hydrating a framework component.
+  const track = document.querySelector<HTMLElement>("[data-areas-track]");
+  const prevBtn = document.querySelector<HTMLButtonElement>("[data-areas-prev]");
+  const nextBtn = document.querySelector<HTMLButtonElement>("[data-areas-next]");
+
+  if (track && prevBtn && nextBtn) {
+    const trackStyles = getComputedStyle(track);
+    const gap = parseFloat(trackStyles.columnGap || trackStyles.gap || "0");
+
+    const scrollByCard = (direction: number) => {
+      const card = track.querySelector<HTMLElement>("[data-area-card]");
+      const amount = card ? card.getBoundingClientRect().width + gap : track.clientWidth;
+      track.scrollBy({ left: amount * direction, behavior: "smooth" });
+    };
+
+    prevBtn.addEventListener("click", () => scrollByCard(-1));
+    nextBtn.addEventListener("click", () => scrollByCard(1));
+  }
+</script>

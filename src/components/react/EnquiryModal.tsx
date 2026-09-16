@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { featuredProperties, recentSales } from "../../data/properties";
 
-type Variant = "buyer" | "seller" | "general";
+type Variant = "buyer" | "seller" | "renter" | "general";
 
 interface OpenDetail {
   listingId?: string;
@@ -14,13 +14,18 @@ const listings = [...featuredProperties, ...recentSales];
 
 const copyByVariant: Record<Variant, { title: string; description: string }> = {
   buyer: {
-    title: "Enquire About This Property",
+    title: "Share Your Details",
     description: "Tell us a bit about yourself and we'll follow up with more details.",
   },
   seller: {
-    title: "Submit Your Property",
+    title: "Submit Your Property Details",
     description:
       "Share your details and a short note about your property. An agent will review and reach out to discuss next steps.",
+  },
+  renter: {
+    title: "Find Your Rental Property",
+    description:
+      "Tell us your rental preferences and budget, and we'll help you find the right fit in Alexandria and the greater DMV area.",
   },
   general: {
     title: "Let's Talk",
@@ -52,11 +57,13 @@ export default function EnquiryModal() {
   useEffect(() => {
     if (isOpen) {
       previouslyFocused.current = document.activeElement as HTMLElement | null;
-      dialogRef.current?.focus();
+      dialogRef.current?.focus({ preventScroll: true });
+      document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
     } else {
+      document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
-      previouslyFocused.current?.focus();
+      previouslyFocused.current?.focus({ preventScroll: true });
     }
   }, [isOpen]);
 
@@ -87,7 +94,7 @@ export default function EnquiryModal() {
 
   return (
     <div
-      className="fixed inset-0 z-200 flex items-center justify-center bg-charcoal/80 p-4"
+      className="fixed inset-0 z-300 flex items-center justify-center bg-charcoal/80 p-4"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) setIsOpen(false);
       }}
@@ -102,7 +109,13 @@ export default function EnquiryModal() {
       >
         <div className="mb-1 flex items-start justify-between">
           <p className="text-[10px] font-medium tracking-[0.3em] uppercase text-gold">
-            {variant === "buyer" ? "Enquiry" : variant === "seller" ? "Sellers" : "Contact"}
+            {variant === "buyer"
+              ? "Buyers"
+              : variant === "seller"
+                ? "Sellers"
+                : variant === "renter"
+                  ? "Renters"
+                  : "Contact"}
           </p>
           <button
             type="button"
@@ -170,7 +183,7 @@ export default function EnquiryModal() {
             </div>
             <div>
               <label htmlFor="enquiry-message" className="block text-[10px] font-medium tracking-[0.2em] uppercase text-warm-gray mb-1.5">
-                Message
+                {variant === "seller" ? "Brief Info of Property" : "Message"}
               </label>
               <textarea
                 id="enquiry-message"

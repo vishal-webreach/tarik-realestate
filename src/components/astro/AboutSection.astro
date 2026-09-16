@@ -14,7 +14,7 @@ import agentPhoto from "../../assets/profile/profile-4.jpg";
       {/* Image */}
       <div class="reveal order-2 lg:order-1">
         <div class="relative">
-          <div class="relative overflow-hidden aspect-[3/4] max-w-120 mx-auto lg:mx-0">
+          <div class="relative overflow-hidden aspect-3/4 max-w-120 mx-auto lg:mx-0">
             <Image
               src={agentPhoto}
               alt={`${siteConfig.agent.fullName}, ${siteConfig.agent.title} — Tarik Real Estate, Alexandria, Virginia`}
@@ -71,20 +71,26 @@ import agentPhoto from "../../assets/profile/profile-4.jpg";
         </div>
 
         <div class="mt-8 pt-8 border-t border-border">
-          <div class="grid grid-cols-2 gap-6">
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 2xl:grid-cols-3 gap-4">
             <div>
-              <p class="font-serif text-charcoal text-2xl font-medium">Alexandria</p>
+              <p class="font-serif text-charcoal text-base font-medium leading-snug">Northern Virginia</p>
               <p class="text-warm-gray text-[12px] mt-1 tracking-wide">Primary Market</p>
             </div>
             <div>
-              <p class="font-serif text-charcoal text-2xl font-medium">Northern VA</p>
-              <p class="text-warm-gray text-[12px] mt-1 tracking-wide">DMV Region</p>
+              <p class="font-serif text-charcoal text-base font-medium leading-snug">Surrounding Counties</p>
+              <p class="text-warm-gray text-[12px] mt-1 tracking-wide">Extended Service Area</p>
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+              <p class="font-serif text-charcoal text-base font-medium leading-snug">Morocco & International</p>
+              <p class="text-warm-gray text-[12px] mt-1 tracking-wide">Global Real Estate Assistance</p>
             </div>
           </div>
         </div>
 
-        <a
-          href="/about"
+        <button
+          type="button"
+          data-enquiry-open
+          data-variant="general"
           class="inline-flex items-center gap-2 mt-8 text-[11px] font-medium tracking-[0.2em] uppercase text-charcoal hover:text-gold transition-colors duration-200 group focus-visible:outline-gold pb-1 border-b border-charcoal hover:border-gold"
         >
           Meet Tarik
@@ -97,7 +103,7 @@ import agentPhoto from "../../assets/profile/profile-4.jpg";
           >
             <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
-        </a>
+        </button>
       </div>
     </div>
   </div>

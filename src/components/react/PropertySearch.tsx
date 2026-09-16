@@ -5,10 +5,11 @@ type DropdownOption = { label: string; value: string };
 const transactionTypes: DropdownOption[] = [
   { label: "Buy", value: "buy" },
   { label: "Sell", value: "sell" },
+  { label: "Rent", value: "rent" },
 ];
 
 const propertyTypes: DropdownOption[] = [
-  { label: "Any Type", value: "" },
+  { label: "Property Type", value: "" },
   { label: "Single Family", value: "single-family" },
   { label: "Townhouse", value: "townhouse" },
   { label: "Condo", value: "condo" },
@@ -100,19 +101,23 @@ export default function PropertySearch() {
   const [txType, setTxType] = useState("buy");
   const [location, setLocation] = useState("");
   const [propType, setPropType] = useState("");
-  const [searched, setSearched] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [message, setMessage] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Frontend-only: simulate search interaction
-    setSearched(true);
-    setTimeout(() => setSearched(false), 2000);
+    // Frontend-only: simulate submission
+    setSubmitted(true);
+    setTimeout(() => setSubmitted(false), 2000);
   };
 
   return (
     <section
       className="relative z-20 -mt-8 lg:-mt-12 pb-2 px-4 lg:px-10"
-      aria-label="Property search"
+      aria-label="Property enquiry"
     >
       <div className="max-w-300 mx-auto">
         <div className="bg-white border border-border shadow-[0_8px_48px_rgba(0,0,0,0.08)]">
@@ -123,8 +128,8 @@ export default function PropertySearch() {
             </p>
           </div>
 
-          {/* Search form */}
-          <form onSubmit={handleSearch} className="p-4 lg:p-6">
+          {/* Enquiry form */}
+          <form onSubmit={handleSubmit} className="p-4 lg:p-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {/* Transaction type */}
               <div>
@@ -134,7 +139,7 @@ export default function PropertySearch() {
                   options={transactionTypes}
                   value={txType}
                   onChange={setTxType}
-                  placeholder="Buy / Sell"
+                  placeholder="Buy / Rent / Sell"
                 />
               </div>
 
@@ -146,7 +151,7 @@ export default function PropertySearch() {
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="City, ZIP, or Neighborhood"
+                  placeholder="City, Zip, or Address"
                   className="w-full h-full px-4 py-3.5 bg-white border border-border text-[13px] text-charcoal placeholder:text-warm-gray-light hover:border-gold focus:border-gold focus:outline-none transition-colors duration-200"
                 />
               </div>
@@ -164,29 +169,79 @@ export default function PropertySearch() {
               </div>
             </div>
 
-            <div className="mt-3 flex justify-end">
+            {/* Contact details */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
+              <div>
+                <label className="sr-only" htmlFor="search-enquiry-name">Name</label>
+                <input
+                  id="search-enquiry-name"
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Full Name"
+                  className="w-full px-4 py-3.5 bg-white border border-border text-[13px] text-charcoal placeholder:text-warm-gray-light hover:border-gold focus:border-gold focus:outline-none transition-colors duration-200"
+                />
+              </div>
+              <div>
+                <label className="sr-only" htmlFor="search-enquiry-email">Email</label>
+                <input
+                  id="search-enquiry-email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email Address"
+                  className="w-full px-4 py-3.5 bg-white border border-border text-[13px] text-charcoal placeholder:text-warm-gray-light hover:border-gold focus:border-gold focus:outline-none transition-colors duration-200"
+                />
+              </div>
+              <div>
+                <label className="sr-only" htmlFor="search-enquiry-phone">Phone</label>
+                <input
+                  id="search-enquiry-phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Phone Number"
+                  className="w-full px-4 py-3.5 bg-white border border-border text-[13px] text-charcoal placeholder:text-warm-gray-light hover:border-gold focus:border-gold focus:outline-none transition-colors duration-200"
+                />
+              </div>
+            </div>
+
+            {/* Additional info + submit */}
+            <div className="mt-3 flex flex-col sm:flex-row gap-3 items-stretch">
+              <div className="flex-1">
+                <label className="sr-only" htmlFor="search-enquiry-message">Additional info</label>
+                <input
+                  id="search-enquiry-message"
+                  type="text"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Additional Info"
+                  className="w-full h-full px-4 py-3.5 bg-white border border-border text-[13px] text-charcoal placeholder:text-warm-gray-light hover:border-gold focus:border-gold focus:outline-none transition-colors duration-200"
+                />
+              </div>
               <button
                 type="submit"
-                className={`inline-flex items-center gap-3 px-8 py-3.5 text-[11px] font-medium tracking-[0.2em] uppercase transition-all duration-300 focus-visible:outline-gold group ${
-                  searched
+                className={`inline-flex items-center justify-center gap-3 px-8 py-3.5 text-[11px] font-medium tracking-[0.2em] uppercase transition-all duration-300 focus-visible:outline-gold group shrink-0 ${
+                  submitted
                     ? "bg-charcoal-light text-white"
                     : "bg-charcoal text-white hover:bg-gold"
                 }`}
-                aria-label="Search properties"
+                aria-label="Submit enquiry"
               >
-                {searched ? (
+                {submitted ? (
                   <>
-                    Searching
+                    Submitting
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="animate-spin">
                       <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.3" strokeDasharray="20" strokeDashoffset="10" />
                     </svg>
                   </>
                 ) : (
                   <>
-                    Search
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="transition-transform duration-300 group-hover:scale-110">
-                      <circle cx="6" cy="6" r="4" stroke="currentColor" strokeWidth="1.3" />
-                      <path d="M9.5 9.5L12 12" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                    Submit
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="transition-transform duration-300 group-hover:translate-x-1">
+                      <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </>
                 )}

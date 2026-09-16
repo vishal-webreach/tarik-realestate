@@ -42,7 +42,7 @@ import introImage from "../../assets/photos/livingRoom.jpg";
 
         <a
           href="#about"
-          class="inline-flex items-center gap-2 mt-8 text-[11px] font-medium tracking-[0.2em] uppercase text-charcoal hover:text-gold transition-colors duration-200 group focus-visible:outline-gold pb-1 border-b border-charcoal hover:border-gold"
+          class="hidden items-center gap-2 mt-8 text-[11px] font-medium tracking-[0.2em] uppercase text-charcoal hover:text-gold transition-colors duration-200 group focus-visible:outline-gold pb-1 border-b border-charcoal hover:border-gold"
         >
           Learn More
           <svg
@@ -60,14 +60,14 @@ import introImage from "../../assets/photos/livingRoom.jpg";
       {/* Image side */}
       <div class="reveal reveal-delay-2">
         <div class="relative">
-          <div class="relative overflow-hidden aspect-[4/5] lg:aspect-[3/4]">
+          <div class="relative overflow-hidden aspect-2/1">
             <Image
               src={introImage}
               alt="Beautifully designed modern living room interior representing premium Alexandria real estate"
               loading="lazy"
-              width={700}
-              height={900}
-              class="w-full h-full object-cover object-center"
+              width={900}
+              height={450}
+              class="w-full h-full object-cover object-top"
             />
           </div>
           {/* Accent border */}

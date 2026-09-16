@@ -3,6 +3,7 @@ import Header from "../components/react/Header";
 import Footer from "../components/astro/Footer.astro";
 import ScrollToTopButton from "../components/astro/ScrollToTopButton.astro";
 import EnquiryModal from "../components/react/EnquiryModal";
+import PropertyDetailModal from "../components/astro/PropertyDetailModal.astro";
 import "../styles/global.css";
 
 interface Props {
@@ -64,6 +65,7 @@ const { title, description } = Astro.props;
     <ScrollToTopButton />
 
     <EnquiryModal client:idle />
+    <PropertyDetailModal />
 
     <script>
       // Delegated click handler: any element with data-enquiry-open dispatches

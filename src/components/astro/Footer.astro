@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import { navLinks, siteConfig } from "../../data/site-config";
+import { legalDocs } from "../../data/legal";
 import logo from "../../assets/branding/tarik-real-estate-logo.png";
 
 const year = new Date().getFullYear();
@@ -13,9 +14,9 @@ const year = new Date().getFullYear();
       {/* Brand column */}
       <div class="lg:col-span-1">
         {/* Logo — the client's full, unmodified logo file */}
-        <div class="mb-6">
+        <a href={import.meta.env.BASE_URL} class="inline-block mb-6 focus-visible:outline-gold" aria-label="Tarik Real Estate home">
           <Image src={logo} alt="Tarik Real Estate" class="h-24 w-auto object-contain" />
-        </div>
+        </a>
 
         <p class="text-white/40 text-[13px] leading-relaxed max-w-55 mb-6">
           Personal real estate guidance in Alexandria, Virginia and the Northern Virginia DMV area.
@@ -119,7 +120,7 @@ const year = new Date().getFullYear();
           {siteConfig.areasServed.map((area) => (
             <li>
               <a
-                href={`/areas/${area.toLowerCase().replace(/\s+/g, "-")}`}
+                href="#areas"
                 class="text-white/50 text-[13px] hover:text-gold transition-colors duration-200 focus-visible:outline-gold"
               >
                 {area}
@@ -136,20 +137,137 @@ const year = new Date().getFullYear();
         &copy; {year} Tarik Real Estate. All Rights Reserved.
       </p>
       <div class="flex items-center gap-6">
-        <a
-          href="/privacy"
+        <button
+          type="button"
+          data-legal-open
+          data-legal-id="privacy"
           class="text-white/25 text-[11px] hover:text-white/50 transition-colors duration-200 focus-visible:outline-gold"
         >
           Privacy Policy
-        </a>
+        </button>
         <span class="text-white/15 text-[11px]">|</span>
-        <a
-          href="/terms"
+        <button
+          type="button"
+          data-legal-open
+          data-legal-id="terms"
           class="text-white/25 text-[11px] hover:text-white/50 transition-colors duration-200 focus-visible:outline-gold"
         >
           Terms
-        </a>
+        </button>
       </div>
     </div>
   </div>
+
+  {/* Legal modal — pre-rendered Privacy Policy / Terms content, toggled by JS */}
+  <div
+    data-legal-modal
+    class="hidden fixed inset-0 z-200 items-center justify-center bg-charcoal/80 p-4"
+  >
+    <div
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+      data-legal-dialog
+      class="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto bg-cream shadow-2xl outline-none animate-scale-in text-charcoal"
+    >
+      <button
+        type="button"
+        data-legal-close
+        aria-label="Close"
+        class="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center bg-cream/90 text-warm-gray-light hover:text-charcoal focus-visible:outline-gold transition-colors duration-200"
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M12 4L4 12M4 4l8 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+        </svg>
+      </button>
+
+      {legalDocs.map((doc) => (
+        <div data-legal-panel={doc.id} hidden class="p-8 lg:p-10">
+          <h2
+            id={`legal-modal-title-${doc.id}`}
+            class="font-serif text-charcoal text-2xl lg:text-3xl font-medium leading-snug mb-2"
+          >
+            {doc.title}
+          </h2>
+          <p class="text-warm-gray-light text-[12px] tracking-wide uppercase mb-8">
+            Last updated{" "}
+            {new Date(doc.updatedAt).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </p>
+          <div class="space-y-6">
+            {doc.sections.map((section) => (
+              <div>
+                <h3 class="font-serif text-charcoal text-base font-medium mb-2">
+                  {section.heading}
+                </h3>
+                <div class="space-y-3 text-warm-gray text-[14px] leading-relaxed">
+                  {section.body.map((paragraph) => (
+                    <p>{paragraph}</p>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
 </footer>
+
+<script>
+  // Dependency-free modal, same pattern as the article modal — Privacy
+  // Policy / Terms content is pre-rendered and just toggled by id, instead
+  // of routing to pages that don't exist yet.
+  const modal = document.querySelector<HTMLElement>("[data-legal-modal]");
+  const dialog = document.querySelector<HTMLElement>("[data-legal-dialog]");
+  const panels = Array.from(document.querySelectorAll<HTMLElement>("[data-legal-panel]"));
+
+  if (modal && dialog && panels.length) {
+    let previouslyFocused: HTMLElement | null = null;
+
+    const openLegal = (id: string) => {
+      panels.forEach((panel) => {
+        panel.hidden = panel.dataset.legalPanel !== id;
+      });
+      dialog.setAttribute("aria-labelledby", `legal-modal-title-${id}`);
+      previouslyFocused = document.activeElement as HTMLElement | null;
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+      dialog.scrollTop = 0;
+      dialog.focus({ preventScroll: true });
+    };
+
+    const closeLegal = () => {
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+      previouslyFocused?.focus({ preventScroll: true });
+    };
+
+    document.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+      const trigger = target.closest<HTMLElement>("[data-legal-open]");
+      if (trigger) {
+        event.preventDefault();
+        const id = trigger.dataset.legalId;
+        if (id) openLegal(id);
+        return;
+      }
+      if (!modal.classList.contains("hidden") && (target === modal || target.closest("[data-legal-close]"))) {
+        closeLegal();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !modal.classList.contains("hidden")) {
+        closeLegal();
+      }
+    });
+  }
+</script>

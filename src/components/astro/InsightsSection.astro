@@ -30,7 +30,7 @@ import { articles } from "../../data/insights";
       </div>
       <a
         href="/resources"
-        class="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] uppercase text-charcoal hover:text-gold transition-colors duration-200 group focus-visible:outline-gold self-start lg:self-auto pb-1 border-b border-charcoal hover:border-gold"
+        class="hidden items-center gap-2 text-[11px] font-medium tracking-[0.2em] uppercase text-charcoal hover:text-gold transition-colors duration-200 group focus-visible:outline-gold self-start lg:self-auto pb-1 border-b border-charcoal hover:border-gold"
       >
         All Articles
         <svg
@@ -49,13 +49,15 @@ import { articles } from "../../data/insights";
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
       {articles.map((article, index) => (
         <div class="reveal" style={`transition-delay: ${index * 100}ms`}>
-          <a
-            href={`/resources/${article.slug}`}
-            class="group block focus-visible:outline-gold"
+          <button
+            type="button"
+            data-article-open
+            data-article-id={article.id}
+            class="group block w-full text-left focus-visible:outline-gold"
             aria-label={`Read article: ${article.title}`}
           >
             {/* Image */}
-            <div class="relative overflow-hidden aspect-[16/10] mb-6">
+            <div class="relative overflow-hidden aspect-16/10 mb-6">
               <Image
                 src={article.image}
                 alt={article.imageAlt}
@@ -93,9 +95,128 @@ import { articles } from "../../data/insights";
                 </svg>
               </div>
             </div>
-          </a>
+          </button>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  {/* Article modal — pre-rendered content for every article, toggled by JS */}
+  <div
+    data-article-modal
+    class="hidden fixed inset-0 z-200 items-center justify-center bg-charcoal/80 p-4"
+  >
+    <div
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+      data-article-dialog
+      class="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto bg-cream shadow-2xl outline-none animate-scale-in"
+    >
+      <button
+        type="button"
+        data-article-close
+        aria-label="Close"
+        class="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center bg-cream/90 text-warm-gray-light hover:text-charcoal focus-visible:outline-gold transition-colors duration-200"
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M12 4L4 12M4 4l8 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+        </svg>
+      </button>
+
+      {articles.map((article, index) => (
+        <div data-article-panel={article.id} hidden>
+          <div class="relative overflow-hidden aspect-video">
+            <Image
+              src={article.image}
+              alt={article.imageAlt}
+              loading={index === 0 ? "eager" : "lazy"}
+              width={1000}
+              height={560}
+              class="w-full h-full object-cover object-center"
+            />
+          </div>
+          <div class="p-8 lg:p-10">
+            <span class="inline-block px-3 py-1 bg-charcoal text-white text-[9px] tracking-[0.2em] uppercase font-medium mb-4">
+              {article.category}
+            </span>
+            <h2
+              id={`article-modal-title-${article.id}`}
+              class="font-serif text-charcoal text-2xl lg:text-3xl font-medium leading-snug mb-3"
+            >
+              {article.title}
+            </h2>
+            <p class="text-warm-gray-light text-[12px] tracking-wide uppercase mb-6">
+              {new Date(article.publishedAt).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+            <div class="space-y-4 text-warm-gray text-[15px] leading-relaxed">
+              {article.content.map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+            </div>
+          </div>
         </div>
       ))}
     </div>
   </div>
 </section>
+
+<script>
+  // Dependency-free modal, same pattern as the Hero/Areas sliders: every
+  // article's full content is pre-rendered in the page and just toggled by
+  // id, instead of hydrating a framework component or routing to a page
+  // that doesn't exist yet.
+  const modal = document.querySelector<HTMLElement>("[data-article-modal]");
+  const dialog = document.querySelector<HTMLElement>("[data-article-dialog]");
+  const panels = Array.from(document.querySelectorAll<HTMLElement>("[data-article-panel]"));
+
+  if (modal && dialog && panels.length) {
+    let previouslyFocused: HTMLElement | null = null;
+
+    const openArticle = (id: string) => {
+      panels.forEach((panel) => {
+        panel.hidden = panel.dataset.articlePanel !== id;
+      });
+      dialog.setAttribute("aria-labelledby", `article-modal-title-${id}`);
+      previouslyFocused = document.activeElement as HTMLElement | null;
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+      dialog.scrollTop = 0;
+      dialog.focus({ preventScroll: true });
+    };
+
+    const closeArticle = () => {
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+      previouslyFocused?.focus({ preventScroll: true });
+    };
+
+    document.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+      const trigger = target.closest<HTMLElement>("[data-article-open]");
+      if (trigger) {
+        event.preventDefault();
+        const id = trigger.dataset.articleId;
+        if (id) openArticle(id);
+        return;
+      }
+      if (!modal.classList.contains("hidden") && (target === modal || target.closest("[data-article-close]"))) {
+        closeArticle();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !modal.classList.contains("hidden")) {
+        closeArticle();
+      }
+    });
+  }
+</script>
