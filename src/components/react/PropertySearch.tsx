@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { HONEYPOT_FIELD, goToThankYou, submitEnquiry, validateEnquiryFields, type FieldError } from "../../lib/enquiryForm";
 
 type DropdownOption = { label: string; value: string };
 
@@ -105,13 +106,58 @@ export default function PropertySearch() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
+  const [honeypot, setHoneypot] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorField, setErrorField] = useState<FieldError["field"] | null>(null);
+  const renderedAtRef = useRef(Date.now());
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const fieldClass = (field: FieldError["field"]) =>
+    `w-full px-4 py-3.5 bg-white border text-[13px] text-charcoal placeholder:text-warm-gray-light focus:outline-none transition-colors duration-200 ${
+      errorField === field
+        ? "border-red-400 focus:border-red-500"
+        : "border-border hover:border-gold focus:border-gold"
+    }`;
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Frontend-only: simulate submission
+
+    const validationError = validateEnquiryFields({ name, email, phone });
+    if (validationError) {
+      setErrorMessage(validationError.message);
+      setErrorField(validationError.field);
+      return;
+    }
+
+    setErrorMessage(null);
+    setErrorField(null);
     setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 2000);
+
+    const transactionLabel = transactionTypes.find((t) => t.value === txType)?.label;
+    const propertyTypeLabel = propertyTypes.find((t) => t.value === propType)?.label;
+
+    const result = await submitEnquiry(
+      {
+        name,
+        email,
+        phone,
+        message,
+        source: "Property Search",
+        transactionType: transactionLabel,
+        location,
+        propertyType: propertyTypeLabel,
+      },
+      honeypot,
+      renderedAtRef.current
+    );
+
+    if (result.success) {
+      goToThankYou(name);
+      return;
+    }
+
+    setSubmitted(false);
+    setErrorMessage(result.message ?? "Something went wrong. Please try again.");
   };
 
   return (
@@ -129,7 +175,29 @@ export default function PropertySearch() {
           </div>
 
           {/* Enquiry form */}
-          <form onSubmit={handleSubmit} className="p-4 lg:p-6">
+          <form onSubmit={handleSubmit} className="relative p-4 lg:p-6">
+            {/* Honeypot — off-screen, not display:none (some bots skip hidden
+               fields but still fill "visible" ones), real visitors never
+               reach it via tab order or see it. */}
+            <div className="absolute left-[-9999px] top-auto w-px h-px overflow-hidden" aria-hidden="true">
+              <label htmlFor="search-company">Leave this field empty</label>
+              <input
+                id="search-company"
+                name={HONEYPOT_FIELD}
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+              />
+            </div>
+
+            {errorMessage && (
+              <p role="alert" className="mb-3 border border-red-200 bg-red-50 px-4 py-3 text-[12px] text-red-700">
+                {errorMessage}
+              </p>
+            )}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {/* Transaction type */}
               <div>
@@ -178,9 +246,13 @@ export default function PropertySearch() {
                   type="text"
                   required
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    if (errorField === "name") setErrorField(null);
+                  }}
                   placeholder="Full Name"
-                  className="w-full px-4 py-3.5 bg-white border border-border text-[13px] text-charcoal placeholder:text-warm-gray-light hover:border-gold focus:border-gold focus:outline-none transition-colors duration-200"
+                  aria-invalid={errorField === "name"}
+                  className={fieldClass("name")}
                 />
               </div>
               <div>
@@ -190,9 +262,13 @@ export default function PropertySearch() {
                   type="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (errorField === "email") setErrorField(null);
+                  }}
                   placeholder="Email Address"
-                  className="w-full px-4 py-3.5 bg-white border border-border text-[13px] text-charcoal placeholder:text-warm-gray-light hover:border-gold focus:border-gold focus:outline-none transition-colors duration-200"
+                  aria-invalid={errorField === "email"}
+                  className={fieldClass("email")}
                 />
               </div>
               <div>
@@ -201,9 +277,13 @@ export default function PropertySearch() {
                   id="search-enquiry-phone"
                   type="tel"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                    if (errorField === "phone") setErrorField(null);
+                  }}
                   placeholder="Phone Number"
-                  className="w-full px-4 py-3.5 bg-white border border-border text-[13px] text-charcoal placeholder:text-warm-gray-light hover:border-gold focus:border-gold focus:outline-none transition-colors duration-200"
+                  aria-invalid={errorField === "phone"}
+                  className={fieldClass("phone")}
                 />
               </div>
             </div>

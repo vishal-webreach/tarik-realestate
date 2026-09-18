@@ -17,6 +17,10 @@ pnpm-debug.log*
 .env
 .env.production
 
+# PHP form handler — real credentials + rate-limit storage, never committed
+server/config.php
+server/storage/*.json
+
 # macOS-specific files
 .DS_Store
 

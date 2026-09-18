@@ -2,15 +2,21 @@
 import { defineConfig } from 'astro/config';
 
 import react from '@astrojs/react';
+import sitemap from '@astrojs/sitemap';
 
 import tailwindcss from '@tailwindcss/vite';
 
-// https://astro.build/config
 export default defineConfig({
-  site: 'https://vishal-webreach.github.io',
-  base: '/tarik-realestate',
+  site: 'https://tarikrealestate.com',
+  base: '/',
 
-  integrations: [react()],
+  integrations: [
+    react(),
+    sitemap({
+      // Utility pages (post-submit redirect, error page) — no indexing value.
+      filter: (page) => !page.includes('/thank-you') && !page.endsWith('/404'),
+    }),
+  ],
 
   vite: {
     plugins: [tailwindcss()]

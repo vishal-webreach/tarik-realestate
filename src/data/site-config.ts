@@ -5,6 +5,12 @@
 //   [x] contact.phone — confirmed from client-supplied profile poster
 //   [x] contact.email — confirmed
 //   [ ] agent.licenseNumber — not yet supplied
+//   [x] forms.endpoint — pointed at tarikrealestate.com; still assumes the
+//       PHP backend is hosted on that same domain — confirm and adjust if
+//       /server actually lives on a different host (see /server/README.md)
+//   [x] astro.config.mjs `site`/`base` — set to tarikrealestate.com / '/'
+//   [ ] seoConfig.twitterHandle — add if/when a social handle exists
+//   [x] BaseLayout.astro robots meta — now "index, follow" site-wide
 // ============================================================================
 
 export interface NavLink {
@@ -39,4 +45,24 @@ export const siteConfig = {
     serviceArea: "Serving the Northern Virginia & DMV area",
   },
   areasServed: ["Alexandria", "Northern Virginia", "Fairfax County", "Arlington", "Washington DC Metro"],
+} as const;
+
+export const formsConfig = {
+  // PHP + SendGrid form handler (source in /server). Assumes /server is
+  // deployed at this same domain — update if it ends up hosted elsewhere.
+  endpoint: "https://tarikrealestate.com/server/enquiry.php",
+} as const;
+
+export const seoConfig = {
+  defaultDescription:
+    "Tarik Real Estate offers expert buying and selling guidance in Alexandria, Virginia and the Northern Virginia DMV area. Local knowledge, personal service, and strategic real estate expertise.",
+  keywords: [
+    "Alexandria Virginia real estate",
+    "Northern Virginia realtor",
+    "DMV homes for sale",
+    "Alexandria VA REALTOR",
+    "Fairfax County real estate",
+    "Arlington VA homes",
+  ],
+  twitterHandle: undefined as string | undefined, // TODO: CLIENT TO CONFIRM — social handles, if any
 } as const;

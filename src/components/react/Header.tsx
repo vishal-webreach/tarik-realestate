@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { navLinks, siteConfig } from "../../data/site-config";
+import { BASE_URL } from "../../lib/baseUrl";
 import crest from "../../assets/branding/crest.png";
 import wordmark from "../../assets/branding/wordmark.png";
 
@@ -84,7 +85,7 @@ export default function Header() {
         <div className="flex items-center justify-between h-18 lg:h-20">
           {/* Logo */}
           <a
-            href={import.meta.env.BASE_URL}
+            href={BASE_URL}
             className="flex items-center gap-3 group focus-visible:outline-gold"
             aria-label="Tarik Real Estate — Home"
           >
@@ -171,7 +172,7 @@ export default function Header() {
             <button
               ref={btnRef}
               onClick={() => setMenuOpen(!menuOpen)}
-              className={`lg:hidden w-10 h-10 flex flex-col justify-center items-center gap-[5px] focus-visible:outline-gold rounded`}
+              className={`lg:hidden w-10 h-10 flex flex-col justify-center items-center gap-1.25 focus-visible:outline-gold rounded`}
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"

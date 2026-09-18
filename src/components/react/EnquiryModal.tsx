@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { featuredProperties, recentSales } from "../../data/properties";
+import { HONEYPOT_FIELD, goToThankYou, submitEnquiry, validateEnquiryFields, type FieldError } from "../../lib/enquiryForm";
 
 type Variant = "buyer" | "seller" | "renter" | "general";
 
@@ -8,7 +9,16 @@ interface OpenDetail {
   variant?: Variant;
 }
 
-type Status = "idle" | "submitting" | "submitted";
+type Status = "idle" | "submitting" | "error";
+
+// Feeds the "Enquiry Type" row in the agent notification email — labeling
+// it "Enquiry — Buyer" there would read as "Enquiry Type: Enquiry — Buyer".
+const sourceByVariant: Record<Variant, string> = {
+  buyer: "Buyer",
+  seller: "Seller",
+  renter: "Renter",
+  general: "General",
+};
 
 const listings = [...featuredProperties, ...recentSales];
 
@@ -38,8 +48,11 @@ export default function EnquiryModal() {
   const [variant, setVariant] = useState<Variant>("general");
   const [listingId, setListingId] = useState<string | undefined>(undefined);
   const [status, setStatus] = useState<Status>("idle");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorField, setErrorField] = useState<FieldError["field"] | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
+  const openedAtRef = useRef<number>(Date.now());
 
   useEffect(() => {
     function handleOpen(event: Event) {
@@ -47,6 +60,9 @@ export default function EnquiryModal() {
       setVariant(detail.variant ?? "general");
       setListingId(detail.listingId);
       setStatus("idle");
+      setErrorMessage(null);
+      setErrorField(null);
+      openedAtRef.current = Date.now();
       setIsOpen(true);
     }
 
@@ -81,16 +97,48 @@ export default function EnquiryModal() {
   const listing = listingId ? listings.find((item) => item.id === listingId) : undefined;
   const copy = copyByVariant[variant];
 
-  // TODO(backend): Replace this stub with a real POST to the future PHP
-  // endpoint, e.g. POST /api/enquiries.php.
-  // Expected payload: { name, email, phone, message, listingId?, inquiryType: variant }
-  // On success: show confirmation (already handled below).
-  // On failure: surface an inline error state (not yet implemented).
-  function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const name = String(formData.get("name") ?? "").trim();
+    const email = String(formData.get("email") ?? "").trim();
+    const phone = String(formData.get("phone") ?? "").trim();
+    const message = String(formData.get("message") ?? "").trim();
+    const honeypot = String(formData.get(HONEYPOT_FIELD) ?? "");
+
+    const validationError = validateEnquiryFields({ name, email, phone });
+    if (validationError) {
+      setErrorMessage(validationError.message);
+      setErrorField(validationError.field);
+      setStatus("error");
+      return;
+    }
+
     setStatus("submitting");
-    setStatus("submitted");
+    setErrorMessage(null);
+    setErrorField(null);
+
+    const result = await submitEnquiry(
+      { name, email, phone, message, source: sourceByVariant[variant], listingAddress: listing?.fullAddress },
+      honeypot,
+      openedAtRef.current
+    );
+
+    if (result.success) {
+      goToThankYou(name);
+      return;
+    }
+
+    setStatus("error");
+    setErrorMessage(result.message ?? "Something went wrong. Please try again.");
   }
+
+  const fieldClass = (field: FieldError["field"]) =>
+    `w-full px-4 py-3 bg-white border text-[13px] text-charcoal focus:outline-none transition-colors duration-200 ${
+      errorField === field
+        ? "border-red-400 focus:border-red-500"
+        : "border-border hover:border-gold focus:border-gold"
+    }`;
 
   return (
     <div
@@ -139,68 +187,87 @@ export default function EnquiryModal() {
           </p>
         )}
 
-        {status === "submitted" ? (
-          <p className="border border-border bg-white px-4 py-8 text-center text-charcoal font-serif text-lg">
-            Thanks — we&rsquo;ll be in touch shortly.
-          </p>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <p className="text-[13px] text-warm-gray leading-relaxed">{copy.description}</p>
-            <div>
-              <label htmlFor="enquiry-name" className="block text-[10px] font-medium tracking-[0.2em] uppercase text-warm-gray mb-1.5">
-                Name
-              </label>
-              <input
-                id="enquiry-name"
-                name="name"
-                type="text"
-                required
-                className="w-full px-4 py-3 bg-white border border-border text-[13px] text-charcoal hover:border-gold focus:border-gold focus:outline-none transition-colors duration-200"
-              />
-            </div>
-            <div>
-              <label htmlFor="enquiry-email" className="block text-[10px] font-medium tracking-[0.2em] uppercase text-warm-gray mb-1.5">
-                Email
-              </label>
-              <input
-                id="enquiry-email"
-                name="email"
-                type="email"
-                required
-                className="w-full px-4 py-3 bg-white border border-border text-[13px] text-charcoal hover:border-gold focus:border-gold focus:outline-none transition-colors duration-200"
-              />
-            </div>
-            <div>
-              <label htmlFor="enquiry-phone" className="block text-[10px] font-medium tracking-[0.2em] uppercase text-warm-gray mb-1.5">
-                Phone
-              </label>
-              <input
-                id="enquiry-phone"
-                name="phone"
-                type="tel"
-                className="w-full px-4 py-3 bg-white border border-border text-[13px] text-charcoal hover:border-gold focus:border-gold focus:outline-none transition-colors duration-200"
-              />
-            </div>
-            <div>
-              <label htmlFor="enquiry-message" className="block text-[10px] font-medium tracking-[0.2em] uppercase text-warm-gray mb-1.5">
-                {variant === "seller" ? "Brief Info of Property" : "Message"}
-              </label>
-              <textarea
-                id="enquiry-message"
-                name="message"
-                rows={3}
-                className="w-full px-4 py-3 bg-white border border-border text-[13px] text-charcoal hover:border-gold focus:border-gold focus:outline-none transition-colors duration-200"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={status === "submitting"}
-              className="w-full inline-flex items-center justify-center gap-3 px-8 py-4 bg-charcoal text-white text-[11px] font-medium tracking-[0.2em] uppercase hover:bg-gold transition-all duration-300 focus-visible:outline-gold"
-            >
-              {status === "submitting" ? "Sending..." : "Send"}
-            </button>
-          </form>
-        )}
+        <form
+          onSubmit={handleSubmit}
+          onChange={(event) => {
+            const target = event.target as HTMLElement;
+            if ("name" in target && target.name === errorField) setErrorField(null);
+          }}
+          className="space-y-4"
+        >
+          <p className="text-[13px] text-warm-gray leading-relaxed">{copy.description}</p>
+
+          {/* Honeypot — off-screen, not display:none (some bots skip hidden
+             fields but still fill "visible" ones), real visitors never
+             reach it via tab order or see it. */}
+          <div className="absolute left-[-9999px] top-auto w-px h-px overflow-hidden" aria-hidden="true">
+            <label htmlFor="enquiry-company">Leave this field empty</label>
+            <input id="enquiry-company" name={HONEYPOT_FIELD} type="text" tabIndex={-1} autoComplete="off" />
+          </div>
+
+          {status === "error" && errorMessage && (
+            <p role="alert" className="border border-red-200 bg-red-50 px-4 py-3 text-[12px] text-red-700">
+              {errorMessage}
+            </p>
+          )}
+
+          <div>
+            <label htmlFor="enquiry-name" className="block text-[10px] font-medium tracking-[0.2em] uppercase text-warm-gray mb-1.5">
+              Name
+            </label>
+            <input
+              id="enquiry-name"
+              name="name"
+              type="text"
+              required
+              aria-invalid={errorField === "name"}
+              className={fieldClass("name")}
+            />
+          </div>
+          <div>
+            <label htmlFor="enquiry-email" className="block text-[10px] font-medium tracking-[0.2em] uppercase text-warm-gray mb-1.5">
+              Email
+            </label>
+            <input
+              id="enquiry-email"
+              name="email"
+              type="email"
+              required
+              aria-invalid={errorField === "email"}
+              className={fieldClass("email")}
+            />
+          </div>
+          <div>
+            <label htmlFor="enquiry-phone" className="block text-[10px] font-medium tracking-[0.2em] uppercase text-warm-gray mb-1.5">
+              Phone
+            </label>
+            <input
+              id="enquiry-phone"
+              name="phone"
+              type="tel"
+              aria-invalid={errorField === "phone"}
+              className={fieldClass("phone")}
+            />
+          </div>
+          <div>
+            <label htmlFor="enquiry-message" className="block text-[10px] font-medium tracking-[0.2em] uppercase text-warm-gray mb-1.5">
+              {variant === "seller" ? "Brief Info of Property" : "Message"}
+            </label>
+            <textarea
+              id="enquiry-message"
+              name="message"
+              rows={3}
+              className="w-full px-4 py-3 bg-white border border-border text-[13px] text-charcoal hover:border-gold focus:border-gold focus:outline-none transition-colors duration-200"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={status === "submitting"}
+            className="w-full inline-flex items-center justify-center gap-3 px-8 py-4 bg-charcoal text-white text-[11px] font-medium tracking-[0.2em] uppercase hover:bg-gold transition-all duration-300 focus-visible:outline-gold"
+          >
+            {status === "submitting" ? "Sending..." : "Send"}
+          </button>
+        </form>
       </div>
     </div>
   );

@@ -1,9 +1,14 @@
 ---
+import { getImage } from "astro:assets";
 import Header from "../components/react/Header";
 import Footer from "../components/astro/Footer.astro";
 import ScrollToTopButton from "../components/astro/ScrollToTopButton.astro";
 import EnquiryModal from "../components/react/EnquiryModal";
 import PropertyDetailModal from "../components/astro/PropertyDetailModal.astro";
+import { siteConfig, seoConfig } from "../data/site-config";
+import { BASE_URL } from "../lib/baseUrl";
+import brickMansion from "../assets/photos/brickMansion.jpg";
+import crest from "../assets/branding/crest.png";
 import "../styles/global.css";
 
 interface Props {
@@ -12,6 +17,40 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+// Social share preview image — standard 1200x630 OG size.
+const ogImage = await getImage({ src: brickMansion, width: 1200, height: 630, format: "jpg" });
+const ogImageURL = new URL(ogImage.src, Astro.site);
+
+const logoURL = new URL(crest.src, Astro.site);
+
+// https://schema.org/RealEstateAgent — lets search engines and AI assistants
+// surface the agent's name, service area, and contact info directly, not
+// just a generic page link.
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "RealEstateAgent",
+  name: siteConfig.business.name,
+  image: logoURL.href,
+  logo: logoURL.href,
+  url: canonicalURL.href,
+  telephone: siteConfig.contact.phone,
+  email: siteConfig.contact.email,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Alexandria",
+    addressRegion: "VA",
+    addressCountry: "US",
+  },
+  areaServed: siteConfig.areasServed,
+  employee: {
+    "@type": "Person",
+    name: siteConfig.agent.fullName,
+    jobTitle: siteConfig.agent.title,
+  },
+};
 ---
 
 <html lang="en">
@@ -20,19 +59,32 @@ const { title, description } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <!-- TODO: switch to "index, follow" once real contact info replaces the placeholders site-wide -->
-    <meta name="robots" content="noindex, nofollow" />
+    <meta name="keywords" content={seoConfig.keywords.join(", ")} />
+    <meta name="author" content={siteConfig.agent.fullName} />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href={canonicalURL} />
 
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Tarik Real Estate" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content={siteConfig.business.name} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${siteConfig.business.name} — ${siteConfig.business.tagline}`} />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+    {seoConfig.twitterHandle && <meta name="twitter:site" content={seoConfig.twitterHandle} />}
+
+    <!-- Structured data (schema.org RealEstateAgent) -->
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -42,7 +94,12 @@ const { title, description } = Astro.props;
       rel="stylesheet"
     />
 
-    <link rel="icon" type="image/png" href={`${import.meta.env.BASE_URL}favicon.png`} />
+    <link rel="icon" href={`${BASE_URL}favicon.ico`} sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href={`${BASE_URL}favicon-32x32.png`} />
+    <link rel="icon" type="image/png" sizes="16x16" href={`${BASE_URL}favicon-16x16.png`} />
+    <link rel="apple-touch-icon" sizes="180x180" href={`${BASE_URL}apple-touch-icon.png`} />
+    <link rel="manifest" href={`${BASE_URL}site.webmanifest`} />
+    <meta name="theme-color" content="#faf8f5" />
     <meta name="generator" content={Astro.generator} />
   </head>
   <body>

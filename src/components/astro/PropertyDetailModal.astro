@@ -49,7 +49,7 @@ const properties = await Promise.all(
             {/* Image gallery — only the first photo ships a real src; the
                rest carry data-src and are fetched on demand by the gallery
                script below as the visitor navigates to them. */}
-            <div class="relative overflow-hidden aspect-[3/2] bg-charcoal" data-gallery={property.id}>
+            <div class="relative overflow-hidden aspect-3/2 bg-charcoal" data-gallery={property.id}>
               {gallery.map((img, i) => (
                 <div class="gallery-slide absolute inset-0" class:list={{ "is-active": i === 0 }} data-gallery-slide>
                   <img

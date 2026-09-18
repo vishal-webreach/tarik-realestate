@@ -1,0 +1,14 @@
+# Only enquiry.php should ever be requested directly. config.php and
+# helpers.php/mailer.php are still readable by enquiry.php via PHP's own
+# require() — that bypasses Apache entirely — this only blocks the HTTP path.
+<FilesMatch "^(config|config\.example|mailer|helpers)\.php$">
+    Require all denied
+</FilesMatch>
+
+# Rate-limit storage must never be web-readable.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^storage/ - [F,L,NC]
+</IfModule>
+
+Options -Indexes

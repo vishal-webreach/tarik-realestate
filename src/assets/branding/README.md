@@ -6,7 +6,8 @@ The client's real logo files live here (in `src/assets/`, not `public/`, so
 - `tarik-real-estate-logo.png` — the original full lockup (crest + wordmark stacked), unmodified.
 - `crest.png` — just the shield/icon mark, auto-cropped from the original.
 - `wordmark.png` — just the "TARIK REAL ESTATE" text, auto-cropped from the original. Not currently used by any component, kept in case a future page wants it on its own.
-- `crest.png` was also used to generate `favicon.png` (the browser tab icon, in `/public`).
+
+The browser tab icon set (`favicon.ico`, `favicon-16x16.png`, `favicon-32x32.png`, `apple-touch-icon.png`, `android-chrome-*.png`, `site.webmanifest`) is generated separately and lives in `/public` — see `BaseLayout.astro`'s `<head>` for how it's wired in.
 
 ## Where each is used
 

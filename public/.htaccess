@@ -1,0 +1,12 @@
+# Astro's static build outputs a literal index.html in every folder (so
+# /thank-you/ works), but that means the raw file is also directly reachable
+# at /index.html and /thank-you/index.html — a duplicate URL for the same
+# page, which looks unprofessional and is bad for SEO even though the
+# canonical tag already tells search engines which one is real. Redirect
+# the raw filename to the clean folder URL instead of just tolerating it.
+RewriteEngine On
+RewriteCond %{THE_REQUEST} /index\.html[\s?] [NC]
+RewriteRule ^(.*)index\.html$ /$1 [R=301,L]
+
+# Don't let anyone browse a raw directory listing (e.g. /_astro/).
+Options -Indexes
