@@ -24,12 +24,14 @@ function Dropdown({
   onChange,
   placeholder,
   id,
+  error,
 }: {
   options: DropdownOption[];
   value: string;
   onChange: (v: string) => void;
   placeholder: string;
   id: string;
+  error?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -50,7 +52,10 @@ function Dropdown({
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex items-center justify-between gap-3 w-full h-full px-4 py-3.5 bg-white border border-border text-left text-[13px] text-charcoal-light hover:border-gold focus-visible:outline-gold focus-visible:border-gold transition-colors duration-200 cursor-pointer"
+        aria-invalid={error}
+        className={`flex items-center justify-between gap-3 w-full h-full px-4 py-3.5 bg-white border text-left text-[13px] text-charcoal-light focus-visible:outline-gold transition-colors duration-200 cursor-pointer ${
+          error ? "border-red-400 focus-visible:border-red-500" : "border-border hover:border-gold focus-visible:border-gold"
+        }`}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={placeholder}
@@ -122,7 +127,21 @@ export default function PropertySearch() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const validationError = validateEnquiryFields({ name, email, phone });
+    // Location and property type only exist on this form (not the enquiry
+    // modal), so they're checked here rather than in the shared validator —
+    // same "nothing is optional" rule applies to them.
+    if (location.trim() === "") {
+      setErrorMessage("Please enter a location.");
+      setErrorField("location");
+      return;
+    }
+    if (propType.trim() === "") {
+      setErrorMessage("Please select a property type.");
+      setErrorField("propertyType");
+      return;
+    }
+
+    const validationError = validateEnquiryFields({ name, email, phone, message });
     if (validationError) {
       setErrorMessage(validationError.message);
       setErrorField(validationError.field);
@@ -175,7 +194,7 @@ export default function PropertySearch() {
           </div>
 
           {/* Enquiry form */}
-          <form onSubmit={handleSubmit} className="relative p-4 lg:p-6">
+          <form onSubmit={handleSubmit} noValidate className="relative p-4 lg:p-6">
             {/* Honeypot — off-screen, not display:none (some bots skip hidden
                fields but still fill "visible" ones), real visitors never
                reach it via tab order or see it. */}
@@ -217,10 +236,15 @@ export default function PropertySearch() {
                 <input
                   id="location-input"
                   type="text"
+                  required
                   value={location}
-                  onChange={(e) => setLocation(e.target.value)}
+                  onChange={(e) => {
+                    setLocation(e.target.value);
+                    if (errorField === "location") setErrorField(null);
+                  }}
                   placeholder="City, Zip, or Address"
-                  className="w-full h-full px-4 py-3.5 bg-white border border-border text-[13px] text-charcoal placeholder:text-warm-gray-light hover:border-gold focus:border-gold focus:outline-none transition-colors duration-200"
+                  aria-invalid={errorField === "location"}
+                  className={`h-full ${fieldClass("location")}`}
                 />
               </div>
 
@@ -231,8 +255,12 @@ export default function PropertySearch() {
                   id="prop-type"
                   options={propertyTypes}
                   value={propType}
-                  onChange={setPropType}
+                  onChange={(v) => {
+                    setPropType(v);
+                    if (errorField === "propertyType") setErrorField(null);
+                  }}
                   placeholder="Property Type"
+                  error={errorField === "propertyType"}
                 />
               </div>
             </div>
@@ -276,6 +304,7 @@ export default function PropertySearch() {
                 <input
                   id="search-enquiry-phone"
                   type="tel"
+                  required
                   value={phone}
                   onChange={(e) => {
                     setPhone(e.target.value);
@@ -295,15 +324,21 @@ export default function PropertySearch() {
                 <input
                   id="search-enquiry-message"
                   type="text"
+                  required
                   value={message}
-                  onChange={(e) => setMessage(e.target.value)}
+                  onChange={(e) => {
+                    setMessage(e.target.value);
+                    if (errorField === "message") setErrorField(null);
+                  }}
                   placeholder="Additional Info"
-                  className="w-full h-full px-4 py-3.5 bg-white border border-border text-[13px] text-charcoal placeholder:text-warm-gray-light hover:border-gold focus:border-gold focus:outline-none transition-colors duration-200"
+                  aria-invalid={errorField === "message"}
+                  className={`h-full ${fieldClass("message")}`}
                 />
               </div>
               <button
                 type="submit"
-                className={`inline-flex items-center justify-center gap-3 px-8 py-3.5 text-[11px] font-medium tracking-[0.2em] uppercase transition-all duration-300 focus-visible:outline-gold group shrink-0 ${
+                disabled={submitted}
+                className={`inline-flex items-center justify-center gap-3 px-8 py-3.5 text-[11px] font-medium tracking-[0.2em] uppercase transition-all duration-300 focus-visible:outline-gold group shrink-0 disabled:cursor-not-allowed ${
                   submitted
                     ? "bg-charcoal-light text-white"
                     : "bg-charcoal text-white hover:bg-gold"

@@ -23,22 +23,51 @@ export interface SubmitResult {
   message?: string;
 }
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE_PATTERN = /^[0-9+\-\s().]{7,30}$/;
+// Requires a real-shaped TLD (2+ letters) — the previous pattern accepted
+// anything after the last dot, so "name@gmail.c" passed as valid.
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+// Only these characters are allowed in a phone field at all (no letters).
+const PHONE_CHARS_PATTERN = /^[0-9+\-\s().]+$/;
+
+function countPhoneDigits(value: string): number {
+  return (value.match(/\d/g) ?? []).length;
+}
+
+// Checks digit COUNT, not string length — the previous check only required
+// 7-30 characters total, so "123-4567" (7 digits) or even shorter strings
+// padded with formatting characters passed as a "valid" phone number.
+// 10-15 digits covers a US number (10, or 11 with a leading "1") through a
+// full international number in E.164 format (max 15 digits).
+function isValidPhone(value: string): boolean {
+  if (!PHONE_CHARS_PATTERN.test(value)) return false;
+  const digits = countPhoneDigits(value);
+  return digits >= 10 && digits <= 15;
+}
+
+export type FieldName = "name" | "email" | "phone" | "message" | "location" | "propertyType";
 
 export interface FieldError {
-  field: "name" | "email" | "phone";
+  field: FieldName;
   message: string;
 }
 
-export function validateEnquiryFields(fields: { name: string; email: string; phone?: string }): FieldError | null {
+// Every field here is mandatory on purpose — this project's forms have no
+// optional fields, not even phone or the message/details box.
+export function validateEnquiryFields(fields: {
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+}): FieldError | null {
   if (fields.name.trim().length < 2) return { field: "name", message: "Please enter your name." };
   if (!EMAIL_PATTERN.test(fields.email.trim())) {
     return { field: "email", message: "Please enter a valid email address." };
   }
-  if (fields.phone && fields.phone.trim() !== "" && !PHONE_PATTERN.test(fields.phone.trim())) {
-    return { field: "phone", message: "Please enter a valid phone number." };
+  if (fields.phone.trim() === "") return { field: "phone", message: "Please enter your phone number." };
+  if (!isValidPhone(fields.phone.trim())) {
+    return { field: "phone", message: "Please enter a valid phone number (at least 10 digits)." };
   }
+  if (fields.message.trim().length === 0) return { field: "message", message: "Please enter a message." };
   return null;
 }
 

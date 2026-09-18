@@ -88,15 +88,33 @@ $transactionType = clean_field($data, 'transactionType', 30);
 $location = clean_field($data, 'location', 100);
 $propertyType = clean_field($data, 'propertyType', 60);
 
+// Every field is mandatory on the frontend now — mirrored here since
+// client-side checks can always be bypassed and this is what actually
+// protects the data.
 $errors = [];
 if (mb_strlen($name) < 2) {
     $errors[] = 'Please enter your name.';
 }
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+if (!is_valid_email($email)) {
     $errors[] = 'Please enter a valid email address.';
 }
-if ($phone !== '' && !preg_match('/^[0-9+\-\s().]{7,30}$/', $phone)) {
-    $errors[] = 'Please enter a valid phone number.';
+if ($phone === '') {
+    $errors[] = 'Please enter your phone number.';
+} elseif (!is_valid_phone($phone)) {
+    $errors[] = 'Please enter a valid phone number (at least 10 digits).';
+}
+if ($message === '') {
+    $errors[] = 'Please enter a message.';
+}
+// location/propertyType only exist on the property-search form, not the
+// enquiry modal, so they're only required when that's actually the source.
+if ($source === 'Property Search') {
+    if ($location === '') {
+        $errors[] = 'Please enter a location.';
+    }
+    if ($propertyType === '') {
+        $errors[] = 'Please select a property type.';
+    }
 }
 
 if ($errors) {
@@ -128,8 +146,7 @@ foreach ($rows as $label => $value) {
     $rowsHtml .= render_field_row($label, $value);
 }
 
-$agentBody = "<p style=\"margin:0 0 24px;font-family:Georgia,'Times New Roman',serif;font-size:22px;font-weight:500;color:#1a1a1a;\">New Website Lead</p>"
-    . "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;\">{$rowsHtml}</table>";
+$agentBody = "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;\">{$rowsHtml}</table>";
 
 $agentHtml = render_email_shell($config['business_name'], $agentBody);
 

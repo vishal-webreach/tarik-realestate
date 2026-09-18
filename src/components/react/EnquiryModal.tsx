@@ -106,7 +106,7 @@ export default function EnquiryModal() {
     const message = String(formData.get("message") ?? "").trim();
     const honeypot = String(formData.get(HONEYPOT_FIELD) ?? "");
 
-    const validationError = validateEnquiryFields({ name, email, phone });
+    const validationError = validateEnquiryFields({ name, email, phone, message });
     if (validationError) {
       setErrorMessage(validationError.message);
       setErrorField(validationError.field);
@@ -189,6 +189,7 @@ export default function EnquiryModal() {
 
         <form
           onSubmit={handleSubmit}
+          noValidate
           onChange={(event) => {
             const target = event.target as HTMLElement;
             if ("name" in target && target.name === errorField) setErrorField(null);
@@ -245,6 +246,7 @@ export default function EnquiryModal() {
               id="enquiry-phone"
               name="phone"
               type="tel"
+              required
               aria-invalid={errorField === "phone"}
               className={fieldClass("phone")}
             />
@@ -257,15 +259,26 @@ export default function EnquiryModal() {
               id="enquiry-message"
               name="message"
               rows={3}
-              className="w-full px-4 py-3 bg-white border border-border text-[13px] text-charcoal hover:border-gold focus:border-gold focus:outline-none transition-colors duration-200"
+              required
+              aria-invalid={errorField === "message"}
+              className={fieldClass("message")}
             />
           </div>
           <button
             type="submit"
             disabled={status === "submitting"}
-            className="w-full inline-flex items-center justify-center gap-3 px-8 py-4 bg-charcoal text-white text-[11px] font-medium tracking-[0.2em] uppercase hover:bg-gold transition-all duration-300 focus-visible:outline-gold"
+            className="w-full inline-flex items-center justify-center gap-3 px-8 py-4 bg-charcoal text-white text-[11px] font-medium tracking-[0.2em] uppercase hover:bg-gold transition-all duration-300 focus-visible:outline-gold disabled:cursor-not-allowed"
           >
-            {status === "submitting" ? "Sending..." : "Send"}
+            {status === "submitting" ? (
+              <>
+                Sending
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="animate-spin">
+                  <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.3" strokeDasharray="20" strokeDashoffset="10" />
+                </svg>
+              </>
+            ) : (
+              "Send"
+            )}
           </button>
         </form>
       </div>

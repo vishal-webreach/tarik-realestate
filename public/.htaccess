@@ -1,3 +1,9 @@
+# GitHub Pages auto-detects a root-level 404.html and serves it for any
+# unmatched URL — plain Apache hosting does NOT do this automatically, it
+# just falls back to its own generic "Not Found" page unless explicitly
+# told otherwise. This is that explicit instruction.
+ErrorDocument 404 /404.html
+
 # Astro's static build outputs a literal index.html in every folder (so
 # /thank-you/ works), but that means the raw file is also directly reachable
 # at /index.html and /thank-you/index.html — a duplicate URL for the same

@@ -19,6 +19,34 @@ function clean_field(array $data, string $key, int $maxLen = 255): string
 }
 
 /**
+ * filter_var(FILTER_VALIDATE_EMAIL) alone accepts a single-character TLD
+ * (e.g. "name@gmail.c" passes it) since that's technically not forbidden
+ * by the email grammar — but no real TLD is that short, so this also
+ * requires a real-shaped one, mirroring the frontend's EMAIL_PATTERN.
+ */
+function is_valid_email(string $email): bool
+{
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return false;
+    }
+    return (bool) preg_match('/\.[a-zA-Z]{2,}$/', $email);
+}
+
+/**
+ * Checks digit COUNT, not string length — mirrors the frontend's
+ * isValidPhone(). 10-15 digits covers a US number (10, or 11 with a
+ * leading "1") through a full international E.164 number.
+ */
+function is_valid_phone(string $phone): bool
+{
+    if (!preg_match('/^[0-9+\-\s().]+$/', $phone)) {
+        return false;
+    }
+    $digitCount = strlen(preg_replace('/\D/', '', $phone));
+    return $digitCount >= 10 && $digitCount <= 15;
+}
+
+/**
  * Simple file-based per-IP throttle. Fails open (allows the request) on any
  * storage problem — spam protection should never be the reason a real lead
  * gets lost.
