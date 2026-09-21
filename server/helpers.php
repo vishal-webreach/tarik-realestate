@@ -23,13 +23,53 @@ function clean_field(array $data, string $key, int $maxLen = 255): string
  * (e.g. "name@gmail.c" passes it) since that's technically not forbidden
  * by the email grammar — but no real TLD is that short, so this also
  * requires a real-shaped one, mirroring the frontend's EMAIL_PATTERN.
+ *
+ * Format-only checks can never catch a domain typo like "gmail.co" instead
+ * of "gmail.com" — that's syntactically perfect but simply can't receive
+ * mail. This also confirms the domain can actually take mail, by looking
+ * up its real DNS records. Only possible server-side — browsers have no
+ * DNS lookup API, so this is the reason a domain-typo error appears a
+ * moment after clicking submit rather than instantly like the other
+ * checks.
  */
 function is_valid_email(string $email): bool
 {
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         return false;
     }
-    return (bool) preg_match('/\.[a-zA-Z]{2,}$/', $email);
+    if (!preg_match('/\.[a-zA-Z]{2,}$/', $email)) {
+        return false;
+    }
+
+    $domain = substr(strrchr($email, '@'), 1);
+    return has_deliverable_mx($domain);
+}
+
+/**
+ * True if mail could actually be delivered to this domain. Two gotchas
+ * plain checkdnsrr($domain, 'MX') misses:
+ *  - A domain with NO MX record can still receive mail via a plain A
+ *    record (an old but valid convention) — so absence of MX isn't
+ *    automatically invalid.
+ *  - A domain can publish a "Null MX" record (RFC 7505 — target ".") to
+ *    explicitly declare it never accepts mail. checkdnsrr() reports that
+ *    as "an MX record exists" (true), which is technically correct but
+ *    the wrong answer for "can I email this domain" — exactly what let
+ *    "gmail.co" through despite it rejecting all mail.
+ */
+function has_deliverable_mx(string $domain): bool
+{
+    $mxRecords = @dns_get_record($domain, DNS_MX);
+    if ($mxRecords) {
+        foreach ($mxRecords as $record) {
+            if (($record['target'] ?? '') !== '.') {
+                return true;
+            }
+        }
+        return false; // every MX record present is a Null MX — mail explicitly refused
+    }
+
+    return checkdnsrr($domain, 'A') || checkdnsrr($domain, 'AAAA');
 }
 
 /**
