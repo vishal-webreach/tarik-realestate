@@ -33,8 +33,8 @@ This build is full of clearly-marked **placeholder content**. Before launch, rep
       `isPlaceholder: true`; replace with real client reviews.
 - [ ] **Insights articles** — `src/data/insights.ts`: sample article content.
 - [ ] **Service areas / imagery** — `src/data/areas.ts`.
-- [ ] **Social links** — `src/components/astro/Footer.astro` currently
-      points to generic `instagram.com`/`facebook.com`/`linkedin.com`.
+- [x] **Social links** — `src/components/astro/Footer.astro`: Instagram,
+      Facebook, and TikTok now point to the client's real profiles.
 - [ ] Remove the `noindex, nofollow` robots meta tag in
       `src/layouts/BaseLayout.astro` once real content is in place.
 

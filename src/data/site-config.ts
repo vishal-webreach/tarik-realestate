@@ -45,6 +45,11 @@ export const siteConfig = {
     serviceArea: "Serving the Northern Virginia & DMV area",
   },
   areasServed: ["Alexandria", "Northern Virginia", "Fairfax County", "Arlington", "Washington DC Metro"],
+  socialLinks: {
+    facebook: "https://www.facebook.com/share/1JFwnksybs/?mibextid=wwXIfr",
+    instagram: "https://www.instagram.com/jabrane_real_estate_group?stkn=bW1zdXpvZGgwNHk4&utm_source=qr",
+    tiktok: "https://www.tiktok.com/@tarikjabranerealtor?_r=1&_t=ZT-99scq4MAaC5",
+  },
 } as const;
 
 export const formsConfig = {
