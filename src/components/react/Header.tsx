@@ -266,6 +266,57 @@ export default function Header() {
               {siteConfig.contact.phone}
             </a>
 
+            {/* Social links */}
+            <div className="flex items-center gap-3 mt-6">
+              <a
+                href={siteConfig.socialLinks.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 border border-white/15 flex items-center justify-center text-white/40 hover:text-gold hover:border-gold transition-colors duration-200 focus-visible:outline-gold"
+                aria-label="Tarik Real Estate on Facebook"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
+                </svg>
+              </a>
+              <a
+                href={siteConfig.socialLinks.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 border border-white/15 flex items-center justify-center text-white/40 hover:text-gold hover:border-gold transition-colors duration-200 focus-visible:outline-gold"
+                aria-label="Tarik Real Estate on Instagram"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" />
+                  <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" />
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                </svg>
+              </a>
+              <a
+                href={siteConfig.socialLinks.tiktok}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 border border-white/15 flex items-center justify-center text-white/40 hover:text-gold hover:border-gold transition-colors duration-200 focus-visible:outline-gold"
+                aria-label="Tarik Real Estate on TikTok"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M16.5 2h-3v14.5a2.5 2.5 0 11-2.5-2.5c.17 0 .34.01.5.04V10.9a5.5 5.5 0 105.5 5.5V8.5a7.44 7.44 0 004.5 1.5v-3a4.5 4.5 0 01-4.5-4.5z" strokeLinejoin="round" />
+                </svg>
+              </a>
+              <a
+                href={siteConfig.contact.whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 border border-white/15 flex items-center justify-center text-white/40 hover:text-gold hover:border-gold transition-colors duration-200 focus-visible:outline-gold"
+                aria-label="Message Tarik Real Estate on WhatsApp"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2a9.98 9.98 0 00-8.62 15.02L2 22l5.12-1.34A10 10 0 1012 2z" />
+                  <path d="M8.5 8.6c.2-.5.4-.6.7-.6h.5c.2 0 .3.1.4.3.2.4.6 1.4.7 1.5.1.2.1.3 0 .5-.1.2-.2.3-.3.4-.2.2-.3.3-.1.6.2.3.7 1 1.4 1.6.8.7 1.5 1 1.8 1.1.2.1.4.1.5-.1.2-.2.6-.7.8-.9.2-.2.3-.2.5-.1.2.1 1.3.6 1.5.7.2.1.4.2.4.3.1.2 0 .8-.2 1.1-.3.4-1.1.7-1.6.8-.5.1-1 .1-2.9-.7-1.9-.8-3.4-2.5-3.5-2.6-.1-.2-.9-1.2-.9-2.3 0-1.1.6-1.7.8-1.9z" />
+                </svg>
+              </a>
+            </div>
+
             <div className="mt-8 pt-8 border-t border-white/10">
               <p className="text-white/30 text-[10px] tracking-[0.2em] uppercase font-medium">Tarik Real Estate</p>
               <p className="text-white/30 text-[10px] mt-1">Alexandria, Virginia</p>
