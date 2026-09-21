@@ -40,6 +40,8 @@ export const siteConfig = {
   contact: {
     phone: "703-862-1119",
     phoneHref: "tel:+17038621119",
+    // Same number as phone/phoneHref above — wa.me needs it digits-only, no "+".
+    whatsappHref: `https://wa.me/17038621119?text=${encodeURIComponent("Hi Tarik, let's talk!")}`,
     email: "tarikrealestate@gmail.com",
     location: "Alexandria, Virginia",
     serviceArea: "Serving the Northern Virginia & DMV area",
