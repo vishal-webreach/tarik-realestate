@@ -3,6 +3,7 @@ import { getImage } from "astro:assets";
 import Header from "../components/react/Header";
 import Footer from "../components/astro/Footer.astro";
 import ScrollToTopButton from "../components/astro/ScrollToTopButton.astro";
+import GoogleAnalytics from "../components/astro/GoogleAnalytics.astro";
 import EnquiryModal from "../components/react/EnquiryModal";
 import PropertyDetailModal from "../components/astro/PropertyDetailModal.astro";
 import { siteConfig, seoConfig } from "../data/site-config";
@@ -56,6 +57,7 @@ const structuredData = {
 
 <html lang="en">
   <head>
+    <GoogleAnalytics />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>

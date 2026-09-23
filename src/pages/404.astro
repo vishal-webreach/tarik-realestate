@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import GoogleAnalytics from "../components/astro/GoogleAnalytics.astro";
 import { siteConfig } from "../data/site-config";
 import { BASE_URL } from "../lib/baseUrl";
 import crest from "../assets/branding/crest.png";
@@ -8,6 +9,7 @@ import wordmark from "../assets/branding/wordmark.png";
 
 <html lang="en">
   <head>
+    <GoogleAnalytics />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Page Not Found | {siteConfig.business.name}</title>
