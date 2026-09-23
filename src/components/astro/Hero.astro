@@ -36,8 +36,11 @@ import { siteConfig } from "../../data/site-config";
     <div class="w-px h-12 bg-linear-to-b from-white/40 to-transparent animate-pulse"></div>
   </div>
 
-  {/* Social rail — first-fold presence without competing with the headline/CTAs */}
-  <div class="absolute top-1/2 right-8 lg:right-12 -translate-y-1/2 hidden lg:flex flex-col items-center gap-3 z-10">
+  {/* Social rail — first-fold presence without competing with the headline/CTAs.
+     z-20: the content block below is also z-10 but wider than its visible text
+     (w-full container), so at equal z-index it paints on top and swallows
+     clicks over this "empty" right-hand strip. Needs to sit above it. */}
+  <div class="absolute top-1/2 right-8 lg:right-12 -translate-y-1/2 hidden lg:flex flex-col items-center gap-3 z-20">
     <a
       href={siteConfig.socialLinks.facebook}
       target="_blank"
