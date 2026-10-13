@@ -1,5 +1,7 @@
 ---
 import "../styles/global.css";
+import GoogleTagManager from "../components/astro/GoogleTagManager.astro";
+import GoogleTagManagerNoscript from "../components/astro/GoogleTagManagerNoscript.astro";
 import GoogleAnalytics from "../components/astro/GoogleAnalytics.astro";
 import { siteConfig } from "../data/site-config";
 import { BASE_URL } from "../lib/baseUrl";
@@ -9,6 +11,7 @@ import wordmark from "../assets/branding/wordmark.png";
 
 <html lang="en">
   <head>
+    <GoogleTagManager />
     <GoogleAnalytics />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -30,6 +33,7 @@ import wordmark from "../assets/branding/wordmark.png";
     <meta name="generator" content={Astro.generator} />
   </head>
   <body class="min-h-screen flex items-center justify-center px-4">
+    <GoogleTagManagerNoscript />
     <main class="w-full max-w-md text-center animate-fade-up">
       <a
         href={BASE_URL}

@@ -3,6 +3,8 @@ import { getImage } from "astro:assets";
 import Header from "../components/react/Header";
 import Footer from "../components/astro/Footer.astro";
 import ScrollToTopButton from "../components/astro/ScrollToTopButton.astro";
+import GoogleTagManager from "../components/astro/GoogleTagManager.astro";
+import GoogleTagManagerNoscript from "../components/astro/GoogleTagManagerNoscript.astro";
 import GoogleAnalytics from "../components/astro/GoogleAnalytics.astro";
 import EnquiryModal from "../components/react/EnquiryModal";
 import PropertyDetailModal from "../components/astro/PropertyDetailModal.astro";
@@ -57,6 +59,7 @@ const structuredData = {
 
 <html lang="en">
   <head>
+    <GoogleTagManager />
     <GoogleAnalytics />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -106,6 +109,7 @@ const structuredData = {
     <meta name="generator" content={Astro.generator} />
   </head>
   <body>
+    <GoogleTagManagerNoscript />
     <!-- Skip to main content — accessibility -->
     <a
       href="#main-content"

@@ -11,6 +11,13 @@ ErrorDocument 404 /404.html
 # canonical tag already tells search engines which one is real. Redirect
 # the raw filename to the clean folder URL instead of just tolerating it.
 RewriteEngine On
+
+# The host already sends http:// to https://, but https://www. was still
+# serving the full site as a second copy. Send every www request to the
+# bare domain (the canonical one in astro.config.mjs), keeping the path.
+RewriteCond %{HTTP_HOST} ^www\.tarikrealestate\.com$ [NC]
+RewriteRule ^(.*)$ https://tarikrealestate.com/$1 [R=301,L]
+
 RewriteCond %{THE_REQUEST} /index\.html[\s?] [NC]
 RewriteRule ^(.*)index\.html$ /$1 [R=301,L]
 
