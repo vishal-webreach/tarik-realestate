@@ -62,11 +62,10 @@ import { serviceAreas } from "../../data/areas";
           class="shrink-0 snap-start w-[80%] sm:w-[calc((100%_-_1.25rem)/2)] lg:w-[calc((100%_-_2.5rem)/3)] xl:w-[calc((100%_-_5rem)/5)]"
           data-area-card
         >
-          <a
-            href={`/areas/${area.slug}`}
-            class="group block relative overflow-hidden aspect-[3/4] focus-visible:outline-gold"
-            aria-label={`Explore properties in ${area.name}`}
-          >
+          {/* Temporarily not a link: /areas/<slug> pages don't exist yet, so the
+              href would 404. Restore href={`/areas/${area.slug}`} and
+              aria-label={`Explore properties in ${area.name}`} once they do. */}
+          <a class="group block relative overflow-hidden aspect-[3/4] focus-visible:outline-gold">
             <Image
               src={area.image}
               alt={area.imageAlt}
