@@ -29,3 +29,7 @@ server/storage/*.json
 
 # Claude Code local/personal settings
 .claude/settings.local.json
+
+# deploy-prep output (upload staging folder)
+dist-changed/
+.deploy-manifest.json
