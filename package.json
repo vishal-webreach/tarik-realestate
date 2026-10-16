@@ -13,12 +13,12 @@
     "deploy-prep": "node scripts/deploy-prep.mjs"
   },
   "dependencies": {
-    "@astrojs/react": "^7.0.1",
+    "@astrojs/react": "^7.1.0",
     "@astrojs/sitemap": "^3.7.4",
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
-    "astro": "^7.3.8",
+    "astro": "^7.4.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "tailwindcss": "^4.3.3"
